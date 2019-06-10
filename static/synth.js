@@ -4,7 +4,7 @@ function tone(f) {
   var now = context.currentTime;
 
   var osc = createOscillator(f, "triangle", context, now);
-  var osc2 = createOscillator(f, "sine", context, now);
+  var osc2 = createOscillator(f, "square", context, now);
 
   osc.start(now);
   osc2.start(now);

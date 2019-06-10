@@ -1,9 +1,21 @@
 port module Main exposing (Model, Msg(..), update, view)
 
+import Bootstrap.Button as Button
+import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
 import Browser
+import Browser.Events exposing (..)
 import Html exposing (..)
+import Html.Attributes as A
 import Html.Events exposing (onClick)
+import Json.Decode as D
 import Json.Encode as E
+import Random
+import Svg as S
+import Svg.Attributes exposing (..)
 
 
 main =
@@ -15,7 +27,42 @@ main =
 
 
 type alias Model =
-    { note : Int }
+    { note : Int, mode : GameMode, level : Int, rangeStart : Int }
+
+
+type GameMode
+    = BeforeGame
+    | Ready
+    | Waiting
+    | GameOver
+
+
+initialRange =
+    24
+
+
+type KeyInput
+    = Left
+    | Right
+    | Other
+
+
+keyDecoder : D.Decoder KeyInput
+keyDecoder =
+    D.map toKeyInput (D.field "key" D.string)
+
+
+toKeyInput : String -> KeyInput
+toKeyInput s =
+    case s of
+        "ArrowLeft" ->
+            Left
+
+        "ArrowRight" ->
+            Right
+
+        _ ->
+            Other
 
 
 
@@ -24,11 +71,14 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { note = 0 }, Cmd.none )
+    ( { note = 44, mode = BeforeGame, level = 1, rangeStart = 32 }, Cmd.none )
 
 
 type Msg
     = Play
+    | NextNote Int
+    | Submit
+    | KeyDown KeyInput
 
 
 
@@ -39,7 +89,63 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Play ->
-            ( model, tone (E.float 440) )
+            let
+                m =
+                    case model.mode of
+                        GameOver ->
+                            { model | level = 1 }
+
+                        _ ->
+                            model
+            in
+            ( m, Random.generate NextNote (Random.int 0 87) )
+
+        NextNote i ->
+            ( { model | note = i, mode = Waiting }, tone (E.float <| noteToFrequency i) )
+
+        Submit ->
+            let
+                lower =
+                    model.rangeStart
+
+                upper =
+                    model.rangeStart + selectionSize model.level
+
+                m =
+                    if lower <= model.note && model.note <= upper then
+                        { model | level = model.level + 1, mode = Ready }
+
+                    else
+                        { model | mode = GameOver }
+            in
+            ( m, Cmd.none )
+
+        KeyDown k ->
+            let
+                desiredRangeStart =
+                    model.rangeStart
+                        + (case k of
+                            Left ->
+                                -1
+
+                            Right ->
+                                1
+
+                            _ ->
+                                0
+                          )
+            in
+            ( { model | rangeStart = clamp 0 (87 - selectionSize model.level) desiredRangeStart }, Cmd.none )
+
+
+clamp : Int -> Int -> Int -> Int
+clamp low high x =
+    Basics.min high (Basics.max low x)
+
+
+selectionSize : Int -> Int
+selectionSize level =
+    initialRange - level + 1
 
 
 
@@ -48,7 +154,8 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch
+        [ onKeyDown (D.map KeyDown keyDecoder) ]
 
 
 
@@ -59,9 +166,202 @@ port tone : E.Value -> Cmd msg
 
 
 
+-- helpers
+-- A4 = 48 semitones up from low A (A1)
+
+
+noteToFrequency : Int -> Float
+noteToFrequency i =
+    let
+        a =
+            2 ^ (1 / 12)
+
+        n =
+            toFloat i - 48
+    in
+    440.0 * a ^ n
+
+
+
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    div [] [ button [ onClick Play ] [ text "Play" ] ]
+    div []
+        [ Grid.container []
+            [ Grid.row []
+                [ Grid.col []
+                    [ Card.config [ Card.outlinePrimary ]
+                        |> Card.block []
+                            [ Block.custom <| showStatus model ]
+                        |> Card.block []
+                            [ Block.custom <| showPiano model ]
+                        |> Card.block []
+                            [ Block.custom <|
+                                Grid.row []
+                                    [ Grid.col []
+                                        [ Button.button [ Button.success, Button.block, Button.disabled (model.mode == Waiting), Button.onClick Play ]
+                                            [ text "Play" ]
+                                        ]
+                                    , Grid.col []
+                                        [ Button.button [ Button.info, Button.block, Button.disabled (model.mode /= Waiting), Button.onClick Submit ]
+                                            [ text "Confirm" ]
+                                        ]
+                                    ]
+                            ]
+                        |> Card.view
+                    ]
+                ]
+            ]
+        ]
+
+
+showStatus : Model -> Html Msg
+showStatus model =
+    text <| "Level: " ++ String.fromInt model.level ++ "/24"
+
+
+showPiano : Model -> Html Msg
+showPiano model =
+    let
+        pianoRange =
+            List.range 0 87
+
+        whiteKeys =
+            List.map
+                (showKey model False)
+                (List.indexedMap Tuple.pair (List.filter (not << isBlackKey) pianoRange))
+
+        blackKeys =
+            List.map
+                (showKey model True)
+                (List.indexedMap Tuple.pair (List.filter isBlackKey pianoRange))
+    in
+    div [ style "text-align: center" ]
+        [ S.svg
+            [ width "860"
+            , height "200"
+            , viewBox "0 0 860 200"
+            ]
+            (whiteKeys ++ blackKeys)
+        ]
+
+
+blackNotes : List Int
+blackNotes =
+    [ 1, 4, 6, 9, 11 ]
+
+
+blackOffset : Int -> Int
+blackOffset scaleNote =
+    case scaleNote of
+        1 ->
+            0
+
+        4 ->
+            2
+
+        6 ->
+            3
+
+        9 ->
+            5
+
+        11 ->
+            6
+
+        _ ->
+            0
+
+
+isBlackKey : Int -> Bool
+isBlackKey key =
+    List.member (modBy 12 key) blackNotes
+
+
+
+-- 0, 3, 5, 8, 10
+-- 0, 2, 3, 5, 6
+
+
+noteColour : Model -> Int -> Bool -> String
+noteColour model key isBlack =
+    let
+        lower =
+            model.rangeStart
+
+        upper =
+            model.rangeStart + initialRange + 1 - model.level
+
+        inSelection =
+            model.mode /= BeforeGame && lower <= key && key <= upper
+    in
+    if inSelection && isBlack then
+        "teal"
+
+    else if inSelection then
+        "turquoise"
+
+    else if model.mode == GameOver && model.note < lower && key < lower then
+        "red"
+
+    else if model.mode == GameOver && model.note > upper && key > upper then
+        "red"
+
+    else if isBlack then
+        "black"
+
+    else if key == 39 then
+        -- middle C... better add note names tho
+        "green"
+
+    else
+        "white"
+
+
+showKey : Model -> Bool -> ( Int, Int ) -> Html Msg
+showKey model isBlack ( i, key ) =
+    let
+        keyWidth =
+            16
+
+        drawWidth =
+            keyWidth
+                - (if isBlack then
+                    4
+
+                   else
+                    0
+                  )
+
+        scaleNote =
+            modBy 12 key
+
+        keyHeight =
+            if isBlack then
+                "48"
+
+            else
+                "72"
+
+        xOffset =
+            if isBlack then
+                (key // 12 * 7 + blackOffset scaleNote) * keyWidth + keyWidth // 2 + 2
+
+            else
+                i * keyWidth
+
+        status =
+            noteColour model key isBlack
+    in
+    S.rect
+        [ x (String.fromInt <| xOffset)
+        , y "10"
+        , width (String.fromInt drawWidth)
+        , height keyHeight
+        , style <|
+            "stroke:black;fill:"
+                ++ status
+        ]
+        []
