@@ -242,11 +242,18 @@ showStatus model =
             , text " "
             , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/24" ]
             , text " "
-            , if model.mode == Ready then
-                Badge.badgeSuccess [] [ text "Correct!" ]
+            , case model.mode of
+                Ready ->
+                    Badge.badgeSuccess [] [ text "Correct!" ]
 
-              else
-                text ""
+                GameOver ->
+                    Badge.badgeDanger [] [ text "Game over!" ]
+
+                Waiting ->
+                    Badge.badgeWarning [] [ text "Waiting" ]
+
+                _ ->
+                    text ""
             , text " "
             , if model.level >= 24 then
                 Badge.badgeDark [] [ text "Master" ]
