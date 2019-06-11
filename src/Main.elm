@@ -79,6 +79,7 @@ type Msg
     | NextNote Int
     | Submit
     | KeyDown KeyInput
+    | ClickedNote String
 
 
 
@@ -136,6 +137,21 @@ update msg model =
                           )
             in
             ( { model | rangeStart = clamp 0 (87 - selectionSize model.level) desiredRangeStart }, Cmd.none )
+
+        ClickedNote id ->
+            case String.toInt id of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just key ->
+                    let
+                        w =
+                            selectionSize model.level
+
+                        rangeStart =
+                            key - w // 2
+                    in
+                    ( { model | rangeStart = clamp 0 (87 - w) rangeStart }, Cmd.none )
 
 
 clamp : Int -> Int -> Int -> Int
@@ -363,5 +379,19 @@ showKey model isBlack ( i, key ) =
         , style <|
             "stroke:black;fill:"
                 ++ status
+        , id (String.fromInt key)
+        , noteClick
         ]
         []
+
+
+noteClick : Html.Attribute Msg
+noteClick =
+    let
+        decoder =
+            D.oneOf
+                [ D.map ClickedNote (D.at [ "target", "id" ] D.string)
+                , D.succeed (ClickedNote "")
+                ]
+    in
+    Html.Events.on "click" decoder

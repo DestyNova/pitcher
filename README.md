@@ -11,7 +11,7 @@ An interactive exercise that teaches perfect pitch recognition. At least, that's
 * [X] Game starts with range of 24 semitones (max(1, 24 - level))
 * [X] Render selected range centred on middle C
 * [X] Allow selection start to be moved up/down the piano with cursor keys
-* [ ] Allow clicking a note to move the guess region to centre on that note
+* [X] Allow clicking a note to move the guess region to centre on that note
 * [X] Clicking OK confirms selection and shows either Success or GameOver state
 * [X] Success message increments level, disables OK button, enables Next button
 * [X] Next button sends Play msg
