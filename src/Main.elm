@@ -1,5 +1,6 @@
 port module Main exposing (Model, Msg(..), update, view)
 
+import Bootstrap.Badge as Badge
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
@@ -27,7 +28,7 @@ main =
 
 
 type alias Model =
-    { note : Int, mode : GameMode, level : Int, rangeStart : Int }
+    { note : Int, mode : GameMode, level : Int, rangeStart : Int, bestScore : Int }
 
 
 type GameMode
@@ -71,7 +72,7 @@ toKeyInput s =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { note = 44, mode = BeforeGame, level = 1, rangeStart = 32 }, Cmd.none )
+    ( { note = 44, mode = BeforeGame, level = 1, rangeStart = 32, bestScore = 0 }, Cmd.none )
 
 
 type Msg
@@ -117,7 +118,7 @@ update msg model =
                         { model | level = model.level + 1, mode = Ready }
 
                     else
-                        { model | mode = GameOver }
+                        { model | mode = GameOver, bestScore = Basics.max model.bestScore model.level }
             in
             ( m, Cmd.none )
 
@@ -235,7 +236,25 @@ view model =
 
 showStatus : Model -> Html Msg
 showStatus model =
-    text <| "Level: " ++ String.fromInt model.level ++ "/24"
+    div []
+        [ h4 []
+            [ Badge.badgePrimary [] [ text <| "Level " ++ String.fromInt model.level ++ "/24" ]
+            , text " "
+            , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/24" ]
+            , text " "
+            , if model.mode == Ready then
+                Badge.badgeSuccess [] [ text "Correct!" ]
+
+              else
+                text ""
+            , text " "
+            , if model.level >= 24 then
+                Badge.badgeDark [] [ text "Master" ]
+
+              else
+                text ""
+            ]
+        ]
 
 
 showPiano : Model -> Html Msg

@@ -1,6 +1,6 @@
 # Pitcher
 
-An interactive exercise that teaches perfect pitch recognition. At least, that's what I suspect it will do.
+An interactive exercise that teaches perfect pitch recognition. At least, that's what I hope it will do.
 
 ## TODO
 * [X] When button clicked:
@@ -15,7 +15,8 @@ An interactive exercise that teaches perfect pitch recognition. At least, that's
 * [X] Clicking OK confirms selection and shows either Success or GameOver state
 * [X] Success message increments level, disables OK button, enables Next button
 * [X] Next button sends Play msg
-* [ ] View: show some kind of mastery icon if level > 24? End game or not?
+* [X] Show max score so far + success indicator when confirming the correct answer
+* [X] View: show some kind of mastery icon if level > 24? End game or not?
 * [ ] Publish via Github-pages
 * [ ] Write article / docs / etc
 
