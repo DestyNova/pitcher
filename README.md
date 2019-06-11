@@ -17,7 +17,7 @@ An interactive exercise that teaches perfect pitch recognition. At least, that's
 * [X] Next button sends Play msg
 * [X] Show max score so far + success indicator when confirming the correct answer
 * [X] View: show some kind of mastery icon if level > 24? End game or not?
-* [ ] Publish via Github-pages
+* [X] [Publish via Github-pages](https://pitcher.overto.eu)
 * [ ] Write article / docs / etc
 
 ## Future ideas
