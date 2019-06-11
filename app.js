@@ -6084,7 +6084,7 @@ var elm$core$Basics$ge = _Utils_ge;
 var elm$html$Html$h4 = _VirtualDom_node('h4');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var rundis$elm_bootstrap$Bootstrap$Badge$Dark = {$: 'Dark'};
+var rundis$elm_bootstrap$Bootstrap$Badge$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
 	return {$: 'Roled', a: a};
 };
@@ -6144,6 +6144,12 @@ var rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal = F3(
 				attributes),
 			children);
 	});
+var rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger = rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal(
+	_List_fromArray(
+		[
+			rundis$elm_bootstrap$Bootstrap$Badge$Roled(rundis$elm_bootstrap$Bootstrap$Badge$Danger)
+		]));
+var rundis$elm_bootstrap$Bootstrap$Badge$Dark = {$: 'Dark'};
 var rundis$elm_bootstrap$Bootstrap$Badge$badgeDark = rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal(
 	_List_fromArray(
 		[
@@ -6166,6 +6172,12 @@ var rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess = rundis$elm_bootstrap$Boo
 	_List_fromArray(
 		[
 			rundis$elm_bootstrap$Bootstrap$Badge$Roled(rundis$elm_bootstrap$Bootstrap$Badge$Success)
+		]));
+var rundis$elm_bootstrap$Bootstrap$Badge$Warning = {$: 'Warning'};
+var rundis$elm_bootstrap$Bootstrap$Badge$badgeWarning = rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal(
+	_List_fromArray(
+		[
+			rundis$elm_bootstrap$Bootstrap$Badge$Roled(rundis$elm_bootstrap$Bootstrap$Badge$Warning)
 		]));
 var author$project$Main$showStatus = function (model) {
 	return A2(
@@ -6196,13 +6208,37 @@ var author$project$Main$showStatus = function (model) {
 								'Best so far ' + (elm$core$String$fromInt(model.bestScore) + '/24'))
 							])),
 						elm$html$Html$text(' '),
-						_Utils_eq(model.mode, author$project$Main$Ready) ? A2(
-						rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Correct!')
-							])) : elm$html$Html$text(''),
+						function () {
+						var _n0 = model.mode;
+						switch (_n0.$) {
+							case 'Ready':
+								return A2(
+									rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Correct!')
+										]));
+							case 'GameOver':
+								return A2(
+									rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Game over!')
+										]));
+							case 'Waiting':
+								return A2(
+									rundis$elm_bootstrap$Bootstrap$Badge$badgeWarning,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Waiting')
+										]));
+							default:
+								return elm$html$Html$text('');
+						}
+					}(),
 						elm$html$Html$text(' '),
 						(model.level >= 24) ? A2(
 						rundis$elm_bootstrap$Bootstrap$Badge$badgeDark,
