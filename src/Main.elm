@@ -45,6 +45,7 @@ initialRange =
 type KeyInput
     = Left
     | Right
+    | Enter
     | Other
 
 
@@ -61,6 +62,9 @@ toKeyInput s =
 
         "ArrowRight" ->
             Right
+
+        "Enter" ->
+            Enter
 
         _ ->
             Other
@@ -123,21 +127,29 @@ update msg model =
             ( m, Cmd.none )
 
         KeyDown k ->
-            let
-                desiredRangeStart =
-                    model.rangeStart
-                        + (case k of
-                            Left ->
-                                -1
+            if k == Enter then
+                if model.mode == Waiting then
+                    update Submit model
 
-                            Right ->
-                                1
+                else
+                    update Play model
 
-                            _ ->
-                                0
-                          )
-            in
-            ( { model | rangeStart = clamp 0 (87 - selectionSize model.level) desiredRangeStart }, Cmd.none )
+            else
+                let
+                    desiredRangeStart =
+                        model.rangeStart
+                            + (case k of
+                                Left ->
+                                    -1
+
+                                Right ->
+                                    1
+
+                                _ ->
+                                    0
+                              )
+                in
+                ( { model | rangeStart = clamp 0 (87 - selectionSize model.level) desiredRangeStart }, Cmd.none )
 
         ClickedNote id ->
             case String.toInt id of
