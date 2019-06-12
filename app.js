@@ -4879,6 +4879,7 @@ var author$project$Main$init = function (_n0) {
 var author$project$Main$KeyDown = function (a) {
 	return {$: 'KeyDown', a: a};
 };
+var author$project$Main$Enter = {$: 'Enter'};
 var author$project$Main$Left = {$: 'Left'};
 var author$project$Main$Other = {$: 'Other'};
 var author$project$Main$Right = {$: 'Right'};
@@ -4888,6 +4889,8 @@ var author$project$Main$toKeyInput = function (s) {
 			return author$project$Main$Left;
 		case 'ArrowRight':
 			return author$project$Main$Right;
+		case 'Enter':
+			return author$project$Main$Enter;
 		default:
 			return author$project$Main$Other;
 	}
@@ -5625,7 +5628,9 @@ var author$project$Main$GameOver = {$: 'GameOver'};
 var author$project$Main$NextNote = function (a) {
 	return {$: 'NextNote', a: a};
 };
+var author$project$Main$Play = {$: 'Play'};
 var author$project$Main$Ready = {$: 'Ready'};
+var author$project$Main$Submit = {$: 'Submit'};
 var author$project$Main$Waiting = {$: 'Waiting'};
 var elm$core$Basics$min = F2(
 	function (x, y) {
@@ -5801,89 +5806,106 @@ var elm$random$Random$int = F2(
 	});
 var author$project$Main$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'Play':
-				var m = function () {
-					var _n1 = model.mode;
-					if (_n1.$ === 'GameOver') {
-						return _Utils_update(
-							model,
-							{level: 1});
-					} else {
-						return model;
-					}
-				}();
-				return _Utils_Tuple2(
-					m,
-					A2(
-						elm$random$Random$generate,
-						author$project$Main$NextNote,
-						A2(elm$random$Random$int, 0, 87)));
-			case 'NextNote':
-				var i = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{mode: author$project$Main$Waiting, note: i}),
-					author$project$Main$tone(
-						elm$json$Json$Encode$float(
-							author$project$Main$noteToFrequency(i))));
-			case 'Submit':
-				var upper = model.rangeStart + author$project$Main$selectionSize(model.level);
-				var lower = model.rangeStart;
-				var m = ((_Utils_cmp(lower, model.note) < 1) && (_Utils_cmp(model.note, upper) < 1)) ? _Utils_update(
-					model,
-					{level: model.level + 1, mode: author$project$Main$Ready}) : _Utils_update(
-					model,
-					{
-						bestScore: A2(elm$core$Basics$max, model.bestScore, model.level),
-						mode: author$project$Main$GameOver
-					});
-				return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
-			case 'KeyDown':
-				var k = msg.a;
-				var desiredRangeStart = model.rangeStart + function () {
-					switch (k.$) {
-						case 'Left':
-							return -1;
-						case 'Right':
-							return 1;
-						default:
-							return 0;
-					}
-				}();
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							rangeStart: A3(
-								author$project$Main$clamp,
-								0,
-								87 - author$project$Main$selectionSize(model.level),
-								desiredRangeStart)
-						}),
-					elm$core$Platform$Cmd$none);
-			default:
-				var id = msg.a;
-				var _n3 = elm$core$String$toInt(id);
-				if (_n3.$ === 'Nothing') {
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-				} else {
-					var key = _n3.a;
-					var w = author$project$Main$selectionSize(model.level);
-					var rangeStart = key - ((w / 2) | 0);
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'Play':
+					var m = function () {
+						var _n1 = model.mode;
+						if (_n1.$ === 'GameOver') {
+							return _Utils_update(
+								model,
+								{level: 1});
+						} else {
+							return model;
+						}
+					}();
+					return _Utils_Tuple2(
+						m,
+						A2(
+							elm$random$Random$generate,
+							author$project$Main$NextNote,
+							A2(elm$random$Random$int, 0, 87)));
+				case 'NextNote':
+					var i = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{
-								rangeStart: A3(author$project$Main$clamp, 0, 87 - w, rangeStart)
-							}),
-						elm$core$Platform$Cmd$none);
-				}
+							{mode: author$project$Main$Waiting, note: i}),
+						author$project$Main$tone(
+							elm$json$Json$Encode$float(
+								author$project$Main$noteToFrequency(i))));
+				case 'Submit':
+					var upper = model.rangeStart + author$project$Main$selectionSize(model.level);
+					var lower = model.rangeStart;
+					var m = ((_Utils_cmp(lower, model.note) < 1) && (_Utils_cmp(model.note, upper) < 1)) ? _Utils_update(
+						model,
+						{level: model.level + 1, mode: author$project$Main$Ready}) : _Utils_update(
+						model,
+						{
+							bestScore: A2(elm$core$Basics$max, model.bestScore, model.level),
+							mode: author$project$Main$GameOver
+						});
+					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
+				case 'KeyDown':
+					var k = msg.a;
+					if (_Utils_eq(k, author$project$Main$Enter)) {
+						if (_Utils_eq(model.mode, author$project$Main$Waiting)) {
+							var $temp$msg = author$project$Main$Submit,
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						} else {
+							var $temp$msg = author$project$Main$Play,
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						}
+					} else {
+						var desiredRangeStart = model.rangeStart + function () {
+							switch (k.$) {
+								case 'Left':
+									return -1;
+								case 'Right':
+									return 1;
+								default:
+									return 0;
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									rangeStart: A3(
+										author$project$Main$clamp,
+										0,
+										87 - author$project$Main$selectionSize(model.level),
+										desiredRangeStart)
+								}),
+							elm$core$Platform$Cmd$none);
+					}
+				default:
+					var id = msg.a;
+					var _n3 = elm$core$String$toInt(id);
+					if (_n3.$ === 'Nothing') {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					} else {
+						var key = _n3.a;
+						var w = author$project$Main$selectionSize(model.level);
+						var rangeStart = key - ((w / 2) | 0);
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									rangeStart: A3(author$project$Main$clamp, 0, 87 - w, rangeStart)
+								}),
+							elm$core$Platform$Cmd$none);
+					}
+			}
 		}
 	});
-var author$project$Main$Play = {$: 'Play'};
-var author$project$Main$Submit = {$: 'Submit'};
 var author$project$Main$blackNotes = _List_fromArray(
 	[1, 4, 6, 9, 11]);
 var elm$core$Basics$modBy = _Basics_modBy;
