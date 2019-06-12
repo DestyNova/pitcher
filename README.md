@@ -2,6 +2,8 @@
 
 An interactive exercise that teaches perfect pitch recognition. At least, that's what I hope it will do.
 
+Try it [here](https://pitcher.overto.eu)!
+
 ## TODO
 * [X] When button clicked:
   * [X] select random note (0-88) and add to state
@@ -18,7 +20,7 @@ An interactive exercise that teaches perfect pitch recognition. At least, that's
 * [X] Show max score so far + success indicator when confirming the correct answer
 * [X] View: show some kind of mastery icon if level > 24? End game or not?
 * [X] [Publish via Github-pages](https://pitcher.overto.eu)
-* [ ] Write article / docs / etc
+* [X] Write article / docs / etc
 
 ## Future ideas
 * Another tab for perfect pitch *production*

@@ -250,28 +250,37 @@ showStatus : Model -> Html Msg
 showStatus model =
     div []
         [ h4 []
-            [ Badge.badgePrimary [] [ text <| "Level " ++ String.fromInt model.level ++ "/24" ]
-            , text " "
-            , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/24" ]
-            , text " "
-            , case model.mode of
-                Ready ->
-                    Badge.badgeSuccess [] [ text "Correct!" ]
+            [ Grid.container []
+                [ Grid.row []
+                    [ Grid.col [ Col.xs10 ]
+                        [ div []
+                            [ Badge.badgePrimary [] [ text <| "Level " ++ String.fromInt model.level ++ "/24" ]
+                            , br [] []
+                            , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/24" ]
+                            , br [] []
+                            , case model.mode of
+                                Ready ->
+                                    Badge.badgeSuccess [] [ text "Correct!" ]
 
-                GameOver ->
-                    Badge.badgeDanger [] [ text "Game over!" ]
+                                GameOver ->
+                                    Badge.badgeDanger [] [ text "Game over!" ]
 
-                Waiting ->
-                    Badge.badgeWarning [] [ text "Waiting" ]
+                                Waiting ->
+                                    Badge.badgeWarning [] [ text "Waiting" ]
 
-                _ ->
-                    text ""
-            , text " "
-            , if model.level >= 24 then
-                Badge.badgeDark [] [ text "Master" ]
+                                _ ->
+                                    text ""
+                            , br [] []
+                            , if model.level >= 24 then
+                                Badge.badgeDark [] [ text "Master" ]
 
-              else
-                text ""
+                              else
+                                text ""
+                            ]
+                        ]
+                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ text "🛈" ] ]
+                    ]
+                ]
             ]
         ]
 
