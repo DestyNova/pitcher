@@ -7170,7 +7170,13 @@ var author$project$Main$showStatus = function (model) {
 													]),
 												_List_fromArray(
 													[
-														elm$html$Html$text('🛈')
+														A2(
+														rundis$elm_bootstrap$Bootstrap$Badge$badgeDark,
+														_List_Nil,
+														_List_fromArray(
+															[
+																elm$html$Html$text('Source code')
+															]))
 													]))
 											]))
 									]))
