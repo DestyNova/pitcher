@@ -278,7 +278,7 @@ showStatus model =
                                 text ""
                             ]
                         ]
-                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ text "🛈" ] ]
+                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeDark [] [ text "Source code" ] ] ]
                     ]
                 ]
             ]
