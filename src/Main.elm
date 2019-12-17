@@ -39,7 +39,7 @@ type GameMode
 
 
 initialRange =
-    24
+    36
 
 
 type KeyInput
@@ -254,9 +254,9 @@ showStatus model =
                 [ Grid.row []
                     [ Grid.col [ Col.xs10 ]
                         [ div []
-                            [ Badge.badgePrimary [] [ text <| "Level " ++ String.fromInt model.level ++ "/24" ]
+                            [ Badge.badgePrimary [] [ text <| "Level " ++ String.fromInt model.level ++ "/36" ]
                             , br [] []
-                            , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/24" ]
+                            , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/36" ]
                             , br [] []
                             , case model.mode of
                                 Ready ->
@@ -271,7 +271,7 @@ showStatus model =
                                 _ ->
                                     text ""
                             , br [] []
-                            , if model.level >= 24 then
+                            , if model.level >= 36 then
                                 Badge.badgeDark [] [ text "Master" ]
 
                               else
