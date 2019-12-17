@@ -104,7 +104,7 @@ update msg model =
                         _ ->
                             model
             in
-            ( m, Random.generate NextNote (Random.int 0 87) )
+            ( m, Random.generate NextNote (Random.int 12 75) )
 
         NextNote i ->
             ( { model | note = i, mode = Waiting }, tone (E.float <| noteToFrequency i) )
