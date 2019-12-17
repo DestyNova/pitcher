@@ -5649,7 +5649,7 @@ var author$project$Main$noteToFrequency = function (i) {
 	var a = A2(elm$core$Basics$pow, 2, 1 / 12);
 	return 440.0 * A2(elm$core$Basics$pow, a, n);
 };
-var author$project$Main$initialRange = 24;
+var author$project$Main$initialRange = 36;
 var author$project$Main$selectionSize = function (level) {
 	return (author$project$Main$initialRange - level) + 1;
 };
@@ -7103,7 +7103,7 @@ var author$project$Main$showStatus = function (model) {
 														_List_fromArray(
 															[
 																elm$html$Html$text(
-																'Level ' + (elm$core$String$fromInt(model.level) + '/24'))
+																'Level ' + (elm$core$String$fromInt(model.level) + '/36'))
 															])),
 														A2(elm$html$Html$br, _List_Nil, _List_Nil),
 														A2(
@@ -7112,7 +7112,7 @@ var author$project$Main$showStatus = function (model) {
 														_List_fromArray(
 															[
 																elm$html$Html$text(
-																'Best so far ' + (elm$core$String$fromInt(model.bestScore) + '/24'))
+																'Best so far ' + (elm$core$String$fromInt(model.bestScore) + '/36'))
 															])),
 														A2(elm$html$Html$br, _List_Nil, _List_Nil),
 														function () {
@@ -7147,7 +7147,7 @@ var author$project$Main$showStatus = function (model) {
 														}
 													}(),
 														A2(elm$html$Html$br, _List_Nil, _List_Nil),
-														(model.level >= 24) ? A2(
+														(model.level >= 36) ? A2(
 														rundis$elm_bootstrap$Bootstrap$Badge$badgeDark,
 														_List_Nil,
 														_List_fromArray(
