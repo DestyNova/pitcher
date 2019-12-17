@@ -5825,7 +5825,7 @@ var author$project$Main$update = F2(
 						A2(
 							elm$random$Random$generate,
 							author$project$Main$NextNote,
-							A2(elm$random$Random$int, 0, 87)));
+							A2(elm$random$Random$int, 12, 75)));
 				case 'NextNote':
 					var i = msg.a;
 					return _Utils_Tuple2(
