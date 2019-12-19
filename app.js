@@ -5840,12 +5840,14 @@ var author$project$Main$update = F2(
 					var lower = model.rangeStart;
 					var m = ((_Utils_cmp(lower, model.note) < 1) && (_Utils_cmp(model.note, upper) < 1)) ? _Utils_update(
 						model,
-						{level: model.level + 1, mode: author$project$Main$Ready}) : _Utils_update(
+						{level: model.level + 1, mode: author$project$Main$Ready}) : ((model.level === 1) ? _Utils_update(
 						model,
 						{
 							bestScore: A2(elm$core$Basics$max, model.bestScore, model.level),
 							mode: author$project$Main$GameOver
-						});
+						}) : _Utils_update(
+						model,
+						{level: model.level - 1, mode: author$project$Main$Ready}));
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				case 'KeyDown':
 					var k = msg.a;
