@@ -5629,7 +5629,9 @@ var author$project$Main$NextNote = function (a) {
 	return {$: 'NextNote', a: a};
 };
 var author$project$Main$Play = {$: 'Play'};
-var author$project$Main$Ready = {$: 'Ready'};
+var author$project$Main$Ready = function (a) {
+	return {$: 'Ready', a: a};
+};
 var author$project$Main$Submit = {$: 'Submit'};
 var author$project$Main$Waiting = {$: 'Waiting'};
 var elm$core$Basics$min = F2(
@@ -5840,14 +5842,20 @@ var author$project$Main$update = F2(
 					var lower = model.rangeStart;
 					var m = ((_Utils_cmp(lower, model.note) < 1) && (_Utils_cmp(model.note, upper) < 1)) ? _Utils_update(
 						model,
-						{level: model.level + 1, mode: author$project$Main$Ready}) : ((model.level === 1) ? _Utils_update(
+						{
+							level: model.level + 1,
+							mode: author$project$Main$Ready(true)
+						}) : ((model.level === 1) ? _Utils_update(
 						model,
 						{
 							bestScore: A2(elm$core$Basics$max, model.bestScore, model.level),
 							mode: author$project$Main$GameOver
 						}) : _Utils_update(
 						model,
-						{level: model.level - 1, mode: author$project$Main$Ready}));
+						{
+							level: model.level - 1,
+							mode: author$project$Main$Ready(false)
+						}));
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				case 'KeyDown':
 					var k = msg.a;
@@ -6005,7 +6013,11 @@ var author$project$Main$noteColour = F3(
 		var upper = ((model.rangeStart + author$project$Main$initialRange) + 1) - model.level;
 		var lower = model.rangeStart;
 		var inSelection = (!_Utils_eq(model.mode, author$project$Main$BeforeGame)) && ((_Utils_cmp(lower, key) < 1) && (_Utils_cmp(key, upper) < 1));
-		return (inSelection && isBlack) ? 'teal' : (inSelection ? 'turquoise' : ((_Utils_eq(model.mode, author$project$Main$GameOver) && ((_Utils_cmp(model.note, lower) < 0) && (_Utils_cmp(key, lower) < 0))) ? 'red' : ((_Utils_eq(model.mode, author$project$Main$GameOver) && ((_Utils_cmp(model.note, upper) > 0) && (_Utils_cmp(key, upper) > 0))) ? 'red' : (isBlack ? 'black' : ((key === 39) ? 'green' : 'white')))));
+		return (inSelection && isBlack) ? 'teal' : (inSelection ? 'turquoise' : (((_Utils_eq(model.mode, author$project$Main$GameOver) || _Utils_eq(
+			model.mode,
+			author$project$Main$Ready(false))) && ((_Utils_cmp(model.note, lower) < 0) && (_Utils_cmp(key, lower) < 0))) ? 'red' : (((_Utils_eq(model.mode, author$project$Main$GameOver) || _Utils_eq(
+			model.mode,
+			author$project$Main$Ready(false))) && ((_Utils_cmp(model.note, upper) > 0) && (_Utils_cmp(key, upper) > 0))) ? 'red' : (isBlack ? 'black' : ((key === 39) ? 'green' : 'white')))));
 	});
 var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var elm$svg$Svg$rect = elm$svg$Svg$trustedNode('rect');
@@ -7121,13 +7133,23 @@ var author$project$Main$showStatus = function (model) {
 														var _n0 = model.mode;
 														switch (_n0.$) {
 															case 'Ready':
-																return A2(
-																	rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess,
-																	_List_Nil,
-																	_List_fromArray(
-																		[
-																			elm$html$Html$text('Correct!')
-																		]));
+																if (_n0.a) {
+																	return A2(
+																		rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess,
+																		_List_Nil,
+																		_List_fromArray(
+																			[
+																				elm$html$Html$text('Correct!')
+																			]));
+																} else {
+																	return A2(
+																		rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger,
+																		_List_Nil,
+																		_List_fromArray(
+																			[
+																				elm$html$Html$text('Wrong!')
+																			]));
+																}
 															case 'GameOver':
 																return A2(
 																	rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger,
