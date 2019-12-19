@@ -33,7 +33,7 @@ type alias Model =
 
 type GameMode
     = BeforeGame
-    | Ready
+    | Ready Bool
     | Waiting
     | GameOver
 
@@ -119,13 +119,13 @@ update msg model =
 
                 m =
                     if lower <= model.note && model.note <= upper then
-                        { model | level = model.level + 1, mode = Ready }
+                        { model | level = model.level + 1, mode = Ready True }
 
                     else if model.level == 1 then
                         { model | mode = GameOver, bestScore = Basics.max model.bestScore model.level }
 
                     else
-                        { model | level = model.level - 1, mode = Ready }
+                        { model | level = model.level - 1, mode = Ready False }
             in
             ( m, Cmd.none )
 
@@ -262,8 +262,11 @@ showStatus model =
                             , Badge.badgeInfo [] [ text <| "Best so far " ++ String.fromInt model.bestScore ++ "/36" ]
                             , br [] []
                             , case model.mode of
-                                Ready ->
+                                Ready True ->
                                     Badge.badgeSuccess [] [ text "Correct!" ]
+
+                                Ready False ->
+                                    Badge.badgeDanger [] [ text "Wrong!" ]
 
                                 GameOver ->
                                     Badge.badgeDanger [] [ text "Game over!" ]
@@ -369,10 +372,10 @@ noteColour model key isBlack =
     else if inSelection then
         "turquoise"
 
-    else if model.mode == GameOver && model.note < lower && key < lower then
+    else if (model.mode == GameOver || model.mode == Ready False) && model.note < lower && key < lower then
         "red"
 
-    else if model.mode == GameOver && model.note > upper && key > upper then
+    else if (model.mode == GameOver || model.mode == Ready False) && model.note > upper && key > upper then
         "red"
 
     else if isBlack then
