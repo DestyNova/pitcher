@@ -2,8 +2,16 @@
 
 set -euo pipefail
 
+rm -rf public
 mkdir -p public
 cp -r static/* public
 
-elm make src/Main.elm --output public/app.js
-uglifyjs public/app.js -o public/app.min.js
+# incremental piano
+echo "Building IncrementalPiano..."
+elm make src/IncrementalPiano.elm --output public/IncrementalPiano.js
+uglifyjs public/IncrementalPiano.js -o public/IncrementalPiano.min.js
+
+# quick pitch
+echo "Building QuickPitch..."
+elm make src/QuickPitch.elm --output public/QuickPitch.js
+uglifyjs public/QuickPitch.js -o public/QuickPitch.min.js

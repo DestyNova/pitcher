@@ -1,4 +1,4 @@
-port module Main exposing (Model, Msg(..), update, view)
+port module IncrementalPiano exposing (Model, Msg(..), update, view)
 
 import Bootstrap.Badge as Badge
 import Bootstrap.Button as Button

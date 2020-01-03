@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Pitcher</title>
-  <script src="app.min.js"></script>
-  <script src="synth.js"></script>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
-  <div id="elm"></div>
-  <script>
-  var app = Elm.Main.init({
-    node: document.getElementById('elm')
-  });
 
-  app.ports.tone.subscribe(function(data) {
-    tone(data);
-  });
+  Games for training your absolute pitch skills. I'm not sure whether they really work yet.
 
-  </script>
+  <br><br>
+
+  <ul>
+    <li><a href="IncrementalPiano.html">Incremental piano</a> &mdash; locate a pitch on a piano keyboard with a gradually reducing margin of error. Helps to get a sense for what octave a note lies in.</li>
+    <li><a href="QuickPitch.html">Quick pitch</a> &mdash; Quickly discriminate between random notes and a target note. The speed aspect helps to train your absolute pitch recognition for each note, rather than relying on relative pitch skills.</li>
+  </ul>
+
 </body>
 </html>
