@@ -12,6 +12,7 @@ import Bootstrap.Grid.Row as Row
 import Browser
 import Browser.Events exposing (..)
 import Delay
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes as A
 import Html.Events exposing (onClick)
@@ -34,7 +35,7 @@ type alias Model =
     { note : Int
     , targetNote : Int
     , mode : GameMode
-    , score : Int
+    , scores : Dict String Int
     }
 
 
@@ -78,7 +79,7 @@ init _ =
     ( { note = 44
       , targetNote = 44
       , mode = BeforeGame
-      , score = 0
+      , scores = Dict.fromList <| List.map (\note -> ( note, 0 )) noteNames
       }
     , Cmd.none
     )
@@ -119,7 +120,7 @@ update msg model =
                 let
                     m =
                         if modBy 12 model.note == modBy 12 model.targetNote then
-                            { model | score = clamp 0 100 (model.score - 1), mode = Ready False }
+                            { model | scores = addToScore model.targetNote -1 model.scores, mode = Ready False }
 
                         else
                             { model | mode = Ready True }
@@ -133,10 +134,10 @@ update msg model =
             let
                 m =
                     if modBy 12 model.note == modBy 12 model.targetNote then
-                        { model | score = clamp 0 100 (model.score + 1), mode = Ready True }
+                        { model | scores = addToScore model.targetNote 1 model.scores, mode = Ready True }
 
                     else
-                        { model | score = clamp 0 100 (model.score - 1), mode = Ready False }
+                        { model | scores = addToScore model.targetNote -1 model.scores, mode = Ready False }
             in
             ( m, Cmd.none )
 
@@ -153,6 +154,20 @@ update msg model =
                     nameToNote noteName
             in
             update (TargetNote n) model
+
+
+addToScore : Int -> Int -> Dict String Int -> Dict String Int
+addToScore note increment scores =
+    Dict.update (noteToName note)
+        (\v ->
+            case v of
+                Nothing ->
+                    Nothing
+
+                Just score ->
+                    Just (Basics.max 0 (score + increment))
+        )
+        scores
 
 
 clamp : Int -> Int -> Int -> Int
@@ -244,6 +259,16 @@ nameToNote s =
             lowA + i
 
 
+getScoreFor : String -> Dict String Int -> Int
+getScoreFor note scores =
+    case Dict.get note scores of
+        Nothing ->
+            0
+
+        Just score ->
+            score
+
+
 
 -- VIEW
 
@@ -293,10 +318,20 @@ showStatus model =
         [ h4 []
             [ Grid.container []
                 [ Grid.row []
-                    [ Grid.col [ Col.xs10 ]
+                    (List.map
+                        (\note ->
+                            Grid.col [ Col.xs1 ]
+                                [ Badge.badgeSecondary []
+                                    [ text (note ++ ": " ++ (String.fromInt <| getScoreFor note model.scores))
+                                    ]
+                                ]
+                        )
+                        noteNames
+                    )
+                , Grid.row []
+                    [ Grid.col [ Col.xs2 ]
                         [ div []
-                            [ Badge.badgePrimary [] [ text <| "Score: " ++ String.fromInt model.score ]
-                            , case model.mode of
+                            [ case model.mode of
                                 Ready True ->
                                     Badge.badgeSuccess [] [ text "Correct!" ]
 
@@ -311,13 +346,19 @@ showStatus model =
 
                                 _ ->
                                     text ""
-                            , br [] []
-                            , text <| "Target note"
+                            ]
+                        ]
+                    , Grid.col [ Col.xs8 ] [ div [] [] ]
+                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeDark [] [ text "Source code" ] ] ]
+                    ]
+                , Grid.row []
+                    [ Grid.col [ Col.xs12 ]
+                        [ div []
+                            [ text <| "Target note"
                             , Select.select [ Select.onChange ChangeTarget ]
                                 (List.map (\note -> Select.item [] [ text note ]) ("Choose a note..." :: noteNames))
                             ]
                         ]
-                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeDark [] [ text "Source code" ] ] ]
                     ]
                 ]
             ]
