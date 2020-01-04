@@ -6581,21 +6581,11 @@ var author$project$QuickPitch$ChangeTarget = function (a) {
 var author$project$QuickPitch$ChangeTargetProbability = function (a) {
 	return {$: 'ChangeTargetProbability', a: a};
 };
-var author$project$QuickPitch$getScoreFor = F2(
-	function (note, scores) {
-		var _n0 = A2(elm$core$Dict$get, note, scores);
-		if (_n0.$ === 'Nothing') {
-			return 0;
-		} else {
-			var score = _n0.a;
-			return score;
-		}
-	});
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$h4 = _VirtualDom_node('h4');
+var rundis$elm_bootstrap$Bootstrap$Badge$Danger = {$: 'Danger'};
+var rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
 var elm$html$Html$span = _VirtualDom_node('span');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6605,10 +6595,6 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var rundis$elm_bootstrap$Bootstrap$Badge$Danger = {$: 'Danger'};
-var rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
 var rundis$elm_bootstrap$Bootstrap$Badge$roleOption = function (role) {
 	switch (role.$) {
 		case 'Primary':
@@ -6678,6 +6664,39 @@ var rundis$elm_bootstrap$Bootstrap$Badge$badgeWarning = rundis$elm_bootstrap$Boo
 		[
 			rundis$elm_bootstrap$Bootstrap$Badge$Roled(rundis$elm_bootstrap$Bootstrap$Badge$Warning)
 		]));
+var author$project$QuickPitch$getScoreBadgeType = F3(
+	function (note, targetNote, mode) {
+		if (_Utils_eq(note, targetNote)) {
+			switch (mode.$) {
+				case 'Ready':
+					if (mode.a) {
+						return rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess;
+					} else {
+						return rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger;
+					}
+				case 'Waiting':
+					return rundis$elm_bootstrap$Bootstrap$Badge$badgeWarning;
+				default:
+					return rundis$elm_bootstrap$Bootstrap$Badge$badgeSecondary;
+			}
+		} else {
+			return rundis$elm_bootstrap$Bootstrap$Badge$badgeSecondary;
+		}
+	});
+var author$project$QuickPitch$getScoreFor = F2(
+	function (note, scores) {
+		var _n0 = A2(elm$core$Dict$get, note, scores);
+		if (_n0.$ === 'Nothing') {
+			return 0;
+		} else {
+			var score = _n0.a;
+			return score;
+		}
+	});
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$h4 = _VirtualDom_node('h4');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var rundis$elm_bootstrap$Bootstrap$Form$Input$OnInput = function (a) {
 	return {$: 'OnInput', a: a};
 };
@@ -8055,10 +8074,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
 			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
 	});
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs1 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col1);
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col10 = {$: 'Col10'};
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs10 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col10);
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col2 = {$: 'Col2'};
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs2 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col2);
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col4 = {$: 'Col4'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs4 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col4);
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8 = {$: 'Col8'};
@@ -8092,8 +8107,11 @@ var author$project$QuickPitch$showStatus = function (model) {
 												[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs1]),
 											_List_fromArray(
 												[
-													A2(
-													rundis$elm_bootstrap$Bootstrap$Badge$badgeSecondary,
+													A5(
+													author$project$QuickPitch$getScoreBadgeType,
+													note,
+													author$project$QuickPitch$noteToName(model.targetNote),
+													model.mode,
 													_List_fromArray(
 														[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2]),
 													_List_fromArray(
@@ -8105,75 +8123,6 @@ var author$project$QuickPitch$showStatus = function (model) {
 												]));
 									},
 									author$project$QuickPitch$noteNames)),
-								A2(
-								rundis$elm_bootstrap$Bootstrap$Grid$row,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										rundis$elm_bootstrap$Bootstrap$Grid$col,
-										_List_fromArray(
-											[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs2]),
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$div,
-												_List_fromArray(
-													[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2]),
-												_List_fromArray(
-													[
-														function () {
-														var _n0 = model.mode;
-														switch (_n0.$) {
-															case 'Ready':
-																if (_n0.a) {
-																	return A2(
-																		rundis$elm_bootstrap$Bootstrap$Badge$badgeSuccess,
-																		_List_Nil,
-																		_List_fromArray(
-																			[
-																				elm$html$Html$text('Correct!')
-																			]));
-																} else {
-																	return A2(
-																		rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger,
-																		_List_Nil,
-																		_List_fromArray(
-																			[
-																				elm$html$Html$text('Wrong!')
-																			]));
-																}
-															case 'Completed':
-																return A2(
-																	rundis$elm_bootstrap$Bootstrap$Badge$badgeDanger,
-																	_List_Nil,
-																	_List_fromArray(
-																		[
-																			elm$html$Html$text('Level complete!')
-																		]));
-															case 'Waiting':
-																return A2(
-																	rundis$elm_bootstrap$Bootstrap$Badge$badgeWarning,
-																	_List_Nil,
-																	_List_fromArray(
-																		[
-																			elm$html$Html$text('Waiting')
-																		]));
-															default:
-																return elm$html$Html$text('');
-														}
-													}()
-													]))
-											])),
-										A2(
-										rundis$elm_bootstrap$Bootstrap$Grid$col,
-										_List_fromArray(
-											[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs10]),
-										_List_fromArray(
-											[
-												A2(elm$html$Html$div, _List_Nil, _List_Nil)
-											]))
-									])),
 								A2(
 								rundis$elm_bootstrap$Bootstrap$Grid$row,
 								_List_Nil,
@@ -8770,6 +8719,8 @@ var rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Card$Block$custom = function (element) {
 	return rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem(element);
 };
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col2 = {$: 'Col2'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs2 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col2);
 var author$project$QuickPitch$view = function (model) {
 	return A2(
 		elm$html$Html$div,
