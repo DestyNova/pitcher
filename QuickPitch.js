@@ -6391,6 +6391,34 @@ var elm$random$Random$int = F2(
 				}
 			});
 	});
+var elm$random$Random$map2 = F3(
+	function (func, _n0, _n1) {
+		var genA = _n0.a;
+		var genB = _n1.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n2 = genA(seed0);
+				var a = _n2.a;
+				var seed1 = _n2.b;
+				var _n3 = genB(seed1);
+				var b = _n3.a;
+				var seed2 = _n3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var elm$random$Random$pair = F2(
+	function (genA, genB) {
+		return A3(
+			elm$random$Random$map2,
+			F2(
+				function (a, b) {
+					return _Utils_Tuple2(a, b);
+				}),
+			genA,
+			genB);
+	});
 var author$project$QuickPitch$update = F2(
 	function (msg, model) {
 		update:
@@ -6418,20 +6446,35 @@ var author$project$QuickPitch$update = F2(
 						A2(
 							elm$random$Random$generate,
 							author$project$QuickPitch$NextNote,
-							A2(elm$random$Random$int, 24, 64)));
+							A2(
+								elm$random$Random$pair,
+								A2(elm$random$Random$int, 0, 3),
+								A2(
+									elm$random$Random$pair,
+									A2(elm$random$Random$int, 0, 3),
+									A2(elm$random$Random$int, 1, 11)))));
 				case 'NextNote':
-					var i = msg.a;
+					var _n1 = msg.a;
+					var targetCheck = _n1.a;
+					var _n2 = _n1.b;
+					var octave = _n2.a;
+					var note = _n2.b;
+					var baseNote = A2(
+						elm$core$Basics$modBy,
+						12,
+						(!targetCheck) ? model.targetNote : note);
+					var newNote = baseNote + (12 * (octave + 2));
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{mode: author$project$QuickPitch$Waiting, note: i}),
+							{mode: author$project$QuickPitch$Waiting, note: newNote}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
 									author$project$QuickPitch$tone(
 									elm$json$Json$Encode$float(
-										author$project$QuickPitch$noteToFrequency(i))),
-									A3(andrewMacmurray$elm_delay$Delay$after, 1.5, andrewMacmurray$elm_delay$Delay$Second, author$project$QuickPitch$Timeout)
+										author$project$QuickPitch$noteToFrequency(newNote))),
+									A3(andrewMacmurray$elm_delay$Delay$after, 1.25, andrewMacmurray$elm_delay$Delay$Second, author$project$QuickPitch$Timeout)
 								])));
 				case 'Timeout':
 					if (_Utils_eq(model.mode, author$project$QuickPitch$Waiting)) {
