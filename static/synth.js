@@ -1,12 +1,18 @@
+var context;
+
 function tone(f) {
-  console.log(0);
-  var context = new AudioContext();
+  // reuse old context to see if we can avoid freezing the browser engine
+  // on Android
+  if(!context) {
+    context = new AudioContext();
+  }
+
   var now = context.currentTime;
 
   var osc = createOscillator(f, "triangle", context, now);
   var osc2 = createOscillator(f, "square", context, now);
 
-  console.log("osc:", osc);
+  // console.log("osc:", osc);
   osc.start(now);
   osc2.start(now);
   osc.stop(now + 2);
@@ -41,7 +47,7 @@ function createOscillator(f, type, context, now) {
   gainOsc.connect(context.destination);
 
   gainOsc.gain.setValueAtTime(0.001, now);
-  console.log("gainOsc.gain.exponentialRampToValueAtTime:", gainOsc.gain.exponentialRampToValueAtTime);
+  // console.log("gainOsc.gain.exponentialRampToValueAtTime:", gainOsc.gain.exponentialRampToValueAtTime);
   gainOsc.gain.exponentialRampToValueAtTime(1.0, now + 0.025);
   gainOsc.gain.exponentialRampToValueAtTime(0.001, now + 2);
   return osc;
