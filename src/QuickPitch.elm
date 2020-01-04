@@ -5,10 +5,13 @@ import Bootstrap.Badge as Badge
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Form.Select as Select
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
+import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Browser.Events exposing (..)
 import Delay
@@ -36,6 +39,7 @@ type alias Model =
     , targetNote : Int
     , mode : GameMode
     , scores : Dict String Int
+    , targetNoteProbability : Float
     }
 
 
@@ -80,6 +84,7 @@ init _ =
       , targetNote = 44
       , mode = BeforeGame
       , scores = Dict.fromList <| List.map (\note -> ( note, 0 )) noteNames
+      , targetNoteProbability = 25
       }
     , Cmd.none
     )
@@ -90,10 +95,11 @@ type Msg
     | TargetNote Int
     | Play
     | Timeout
-    | NextNote ( Int, ( Int, Int ) )
+    | NextNote ( Float, ( Int, Int ) )
     | Submit
     | KeyDown KeyInput
     | ChangeTarget String
+    | ChangeTargetProbability String
 
 
 
@@ -113,13 +119,13 @@ update msg model =
             -- 1. chance for target note: 25%, else, uniform among the other 11
             -- 2. octave: +(0, 1, 2, 3)
             -- 3. note (if not target)
-            ( model, Random.generate NextNote (Random.pair (Random.int 0 3) (Random.pair (Random.int 0 3) (Random.int 1 11))) )
+            ( model, Random.generate NextNote (Random.pair (Random.float 0 100) (Random.pair (Random.int 0 3) (Random.int 1 11))) )
 
         NextNote ( targetCheck, ( octave, note ) ) ->
             let
                 baseNote =
                     modBy 12 <|
-                        if targetCheck == 0 then
+                        if targetCheck < model.targetNoteProbability then
                             model.targetNote
 
                         else
@@ -169,6 +175,13 @@ update msg model =
                     nameToNote noteName
             in
             update (TargetNote n) model
+
+        ChangeTargetProbability value ->
+            let
+                p =
+                    Maybe.withDefault 25 (String.toFloat value)
+            in
+            ( { model | targetNoteProbability = p }, Cmd.none )
 
 
 addToScore : Int -> Int -> Dict String Int -> Dict String Int
@@ -323,6 +336,13 @@ view model =
                         |> Card.view
                     ]
                 ]
+            , Grid.row []
+                [ Grid.col [ Col.xs2 ]
+                    [ h5 [ Spacing.mb2 ]
+                        [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeSecondary [] [ text "Source code" ] ]
+                        ]
+                    ]
+                ]
             ]
         ]
 
@@ -336,7 +356,7 @@ showStatus model =
                     (List.map
                         (\note ->
                             Grid.col [ Col.xs1 ]
-                                [ Badge.badgeSecondary []
+                                [ Badge.badgeSecondary [ Spacing.mb2 ]
                                     [ text (note ++ ": " ++ (String.fromInt <| getScoreFor note model.scores))
                                     ]
                                 ]
@@ -345,7 +365,7 @@ showStatus model =
                     )
                 , Grid.row []
                     [ Grid.col [ Col.xs2 ]
-                        [ div []
+                        [ div [ Spacing.mb2 ]
                             [ case model.mode of
                                 Ready True ->
                                     Badge.badgeSuccess [] [ text "Correct!" ]
@@ -363,15 +383,26 @@ showStatus model =
                                     text ""
                             ]
                         ]
-                    , Grid.col [ Col.xs8 ] [ div [] [] ]
-                    , Grid.col [ Col.xs2 ] [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeDark [] [ text "Source code" ] ] ]
+                    , Grid.col [ Col.xs10 ] [ div [] [] ]
                     ]
                 , Grid.row []
-                    [ Grid.col [ Col.xs12 ]
-                        [ div []
-                            [ text <| "Target note"
+                    [ Grid.col [ Col.xs8 ]
+                        [ div
+                            [ A.class "input-group" ]
+                            [ div [ A.class "input-group-prepend" ] [ span [ A.class "input-group-text" ] [ text "Target note" ] ]
                             , Select.select [ Select.onChange ChangeTarget ]
                                 (List.map (\note -> Select.item [] [ text note ]) ("Choose a note..." :: noteNames))
+                            ]
+                        ]
+                    , Grid.col [ Col.xs4 ]
+                        [ div []
+                            [ InputGroup.config
+                                (InputGroup.number [ Input.onInput ChangeTargetProbability, Input.placeholder "25" ])
+                                |> InputGroup.predecessors
+                                    [ InputGroup.span [] [ text "Target note probability" ] ]
+                                |> InputGroup.successors
+                                    [ InputGroup.span [] [ text "%" ] ]
+                                |> InputGroup.view
                             ]
                         ]
                     ]
