@@ -21,8 +21,11 @@ Try it [here](https://pitcher.overto.eu)!
 * [X] View: show some kind of mastery icon if level > 24? End game or not?
 * [X] [Publish via Github-pages](https://pitcher.overto.eu)
 * [X] Write article / docs / etc
+* [X] Second game: Quick Pitch identification.
 
 ## Future ideas
+* Generate several different timbres of note, rather than the same simple triangle+square wave oscillators
+* Shepard tone generator to disrupt short-term memory of the target note and reduce the influence of relative pitch between trials?
 * Another tab for perfect pitch *production*
   * show randomly placed range on piano
   * give some kind of control of pitch starting at a random continuous note, maybe a knob, or up/down arrows?
