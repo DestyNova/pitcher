@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-rm -rf public
 mkdir -p public
 cp -r static/* public
 
