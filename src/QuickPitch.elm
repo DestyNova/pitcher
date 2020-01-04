@@ -90,7 +90,7 @@ type Msg
     | TargetNote Int
     | Play
     | Timeout
-    | NextNote Int
+    | NextNote ( Int, ( Int, Int ) )
     | Submit
     | KeyDown KeyInput
     | ChangeTarget String
@@ -110,10 +110,25 @@ update msg model =
             ( { model | mode = GameStarted, targetNote = i }, tone (E.float <| noteToFrequency i) )
 
         Play ->
-            ( model, Random.generate NextNote (Random.int 24 64) )
+            -- 1. chance for target note: 25%, else, uniform among the other 11
+            -- 2. octave: +(0, 1, 2, 3)
+            -- 3. note (if not target)
+            ( model, Random.generate NextNote (Random.pair (Random.int 0 3) (Random.pair (Random.int 0 3) (Random.int 1 11))) )
 
-        NextNote i ->
-            ( { model | note = i, mode = Waiting }, Cmd.batch [ tone (E.float <| noteToFrequency i), Delay.after 1.5 Delay.Second Timeout ] )
+        NextNote ( targetCheck, ( octave, note ) ) ->
+            let
+                baseNote =
+                    modBy 12 <|
+                        if targetCheck == 0 then
+                            model.targetNote
+
+                        else
+                            note
+
+                newNote =
+                    baseNote + 12 * (octave + 2)
+            in
+            ( { model | note = newNote, mode = Waiting }, Cmd.batch [ tone (E.float <| noteToFrequency newNote), Delay.after 1.25 Delay.Second Timeout ] )
 
         Timeout ->
             if model.mode == Waiting then
