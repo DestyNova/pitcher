@@ -356,35 +356,16 @@ showStatus model =
                     (List.map
                         (\note ->
                             Grid.col [ Col.xs1 ]
-                                [ Badge.badgeSecondary [ Spacing.mb2 ]
+                                [ getScoreBadgeType note
+                                    (noteToName model.targetNote)
+                                    model.mode
+                                    [ Spacing.mb2 ]
                                     [ text (note ++ ": " ++ (String.fromInt <| getScoreFor note model.scores))
                                     ]
                                 ]
                         )
                         noteNames
                     )
-                , Grid.row []
-                    [ Grid.col [ Col.xs2 ]
-                        [ div [ Spacing.mb2 ]
-                            [ case model.mode of
-                                Ready True ->
-                                    Badge.badgeSuccess [] [ text "Correct!" ]
-
-                                Ready False ->
-                                    Badge.badgeDanger [] [ text "Wrong!" ]
-
-                                Completed ->
-                                    Badge.badgeDanger [] [ text "Level complete!" ]
-
-                                Waiting ->
-                                    Badge.badgeWarning [] [ text "Waiting" ]
-
-                                _ ->
-                                    text ""
-                            ]
-                        ]
-                    , Grid.col [ Col.xs10 ] [ div [] [] ]
-                    ]
                 , Grid.row []
                     [ Grid.col [ Col.xs8 ]
                         [ div
@@ -409,3 +390,22 @@ showStatus model =
                 ]
             ]
         ]
+
+
+getScoreBadgeType note targetNote mode =
+    if note == targetNote then
+        case mode of
+            Ready True ->
+                Badge.badgeSuccess
+
+            Ready False ->
+                Badge.badgeDanger
+
+            Waiting ->
+                Badge.badgeWarning
+
+            _ ->
+                Badge.badgeSecondary
+
+    else
+        Badge.badgeSecondary
