@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pitcher: Quick Pitch</title>
+  <script src="QuickPitch.min.js"></script>
+  <script src="synth.js"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+  <div id="elm"></div>
+  <script>
+  var app = Elm.QuickPitch.init({
+    node: document.getElementById('elm')
+  });
+
+  app.ports.tone.subscribe(function(data) {
+    tone(data);
+  });
+
+  </script>
+</body>
+</html>
