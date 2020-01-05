@@ -19,3 +19,4 @@ uglifyjs public/QuickPitch.js -o public/QuickPitch.min.js
 echo "Building PitchTest..."
 elm make src/PitchTest.elm --output public/PitchTest.js
 uglifyjs public/PitchTest.js -o public/PitchTest.min.js
+

@@ -26,14 +26,6 @@ main =
 
 
 
--- CONSTS
-
-
-maxRounds =
-    20
-
-
-
 -- MODEL
 
 
@@ -42,6 +34,7 @@ type alias Model =
     , mode : GameMode
     , errors : List ( String, String, Int )
     , round : Int
+    , maxRounds : Int
     }
 
 
@@ -62,6 +55,7 @@ init _ =
       , mode = BeforeGame
       , errors = []
       , round = 1
+      , maxRounds = 32
       }
     , Cmd.none
     )
@@ -73,6 +67,7 @@ type Msg
     | NextNote
     | Guess String
     | GameOver
+    | ChangeMaxRounds String
 
 
 
@@ -118,7 +113,7 @@ update msg model =
                 m =
                     { model | errors = errors, round = round }
             in
-            if round > maxRounds then
+            if round > model.maxRounds then
                 update GameOver m
 
             else
@@ -126,6 +121,13 @@ update msg model =
 
         GameOver ->
             ( { model | mode = Completed }, Cmd.none )
+
+        ChangeMaxRounds s ->
+            let
+                n =
+                    Maybe.withDefault 32 (String.toInt s)
+            in
+            ( { model | maxRounds = n }, Cmd.none )
 
 
 
@@ -226,25 +228,21 @@ view model =
                             [ Block.titleH4 []
                                 [ text "Pitch test"
                                 ]
-                            , Block.text [] [ text <| "Try to identify a sequence of " ++ String.fromInt maxRounds ++ " pitches with no feedback until the end." ]
+                            , Block.text [] [ text <| "Try to identify a sequence of " ++ String.fromInt model.maxRounds ++ " pitches with no feedback until the end." ]
                             , Block.custom <|
-                                Grid.row []
-                                    [ Grid.col []
-                                        [ case model.mode of
-                                            BeforeGame ->
-                                                Button.button [ Button.success, Button.block, Button.onClick Start ]
-                                                    [ text "Start test" ]
+                                div []
+                                    [ case model.mode of
+                                        BeforeGame ->
+                                            showStartControls model.maxRounds
 
-                                            Completed ->
-                                                div []
-                                                    [ showResults model.errors
-                                                    , Button.button [ Button.success, Button.block, Button.onClick Start ]
-                                                        [ text "Start again" ]
-                                                    ]
+                                        Completed ->
+                                            div []
+                                                [ showResults model.errors
+                                                , showStartControls model.maxRounds
+                                                ]
 
-                                            _ ->
-                                                showControls model
-                                        ]
+                                        _ ->
+                                            showControls model
                                     ]
                             ]
                         |> Card.view
@@ -265,7 +263,7 @@ showControls : Model -> Html Msg
 showControls model =
     div []
         [ h4 []
-            [ text <| "Round: " ++ String.fromInt model.round ++ "/" ++ String.fromInt maxRounds
+            [ text <| "Round: " ++ String.fromInt model.round ++ "/" ++ String.fromInt model.maxRounds
             , Grid.container []
                 [ Grid.row [ Row.betweenXs ]
                     (List.map
@@ -317,3 +315,20 @@ meanError xs =
     toFloat (List.sum <| List.map (\( _, _, error ) -> error) xs)
         / (toFloat <| List.length xs)
         |> String.fromFloat
+
+
+showStartControls : Int -> Html Msg
+showStartControls maxRounds =
+    Grid.row []
+        [ Grid.col []
+            [ InputGroup.config
+                (InputGroup.number [ Input.onInput ChangeMaxRounds, Input.placeholder (String.fromInt maxRounds) ])
+                |> InputGroup.predecessors
+                    [ InputGroup.span [] [ text "Rounds" ] ]
+                |> InputGroup.view
+            ]
+        , Grid.col []
+            [ Button.button [ Button.success, Button.block, Button.onClick Start ]
+                [ text "Start test" ]
+            ]
+        ]
