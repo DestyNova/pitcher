@@ -7,7 +7,6 @@ import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.InputGroup as InputGroup
-import Bootstrap.Form.Select as Select
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
@@ -359,7 +358,7 @@ showStatus model =
                                 [ getScoreBadgeType note
                                     (noteToName model.targetNote)
                                     model.mode
-                                    [ Spacing.mb2 ]
+                                    [ Spacing.mb2, onClick (ChangeTarget note) ]
                                     [ text (note ++ ": " ++ (String.fromInt <| getScoreFor note model.scores))
                                     ]
                                 ]
@@ -367,15 +366,7 @@ showStatus model =
                         noteNames
                     )
                 , Grid.row []
-                    [ Grid.col [ Col.xs8 ]
-                        [ div
-                            [ A.class "input-group" ]
-                            [ div [ A.class "input-group-prepend" ] [ span [ A.class "input-group-text" ] [ text "Target note" ] ]
-                            , Select.select [ Select.onChange ChangeTarget ]
-                                (List.map (\note -> Select.item [] [ text note ]) ("Choose a note..." :: noteNames))
-                            ]
-                        ]
-                    , Grid.col [ Col.xs4 ]
+                    [ Grid.col [ Col.xs12 ]
                         [ div []
                             [ InputGroup.config
                                 (InputGroup.number [ Input.onInput ChangeTargetProbability, Input.placeholder "25" ])
@@ -403,6 +394,9 @@ getScoreBadgeType note targetNote mode =
 
             Waiting ->
                 Badge.badgeWarning
+
+            GameStarted ->
+                Badge.badgeInfo
 
             _ ->
                 Badge.badgeSecondary

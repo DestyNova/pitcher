@@ -1,6 +1,6 @@
 # Pitcher
 
-An interactive exercise that teaches perfect pitch recognition. At least, that's what I hope it will do.
+An interactive exercise that teaches absolute pitch (a.k.a. perfect pitch) recognition. At least, that's what I hope it will do.
 
 Try it [here](https://pitcher.overto.eu)!
 
@@ -22,6 +22,8 @@ Try it [here](https://pitcher.overto.eu)!
 * [X] [Publish via Github-pages](https://pitcher.overto.eu)
 * [X] Write article / docs / etc
 * [X] Second game: Quick Pitch identification.
+* [X] Quick Pitch: Get rid of the select dropdown to choose the target note; instead, make it so you just click the appropriate score badge.
+* [ ] Redesign UI to fit better on mobile (maybe make the note list vertical?)
 
 ## Future ideas
 * Generate several different timbres of note, rather than the same simple triangle+square wave oscillators
@@ -32,3 +34,6 @@ Try it [here](https://pitcher.overto.eu)!
   * clicking OK validates whether chosen pitch is within target range
     * if yes, then next level reduces range as before
     * else game over
+
+## Further reading on the topic
+* [Rush's 1989 thesis](https://etd.ohiolink.edu/!etd.send_file?accession=osu1216931520&disposition=inline), a good summary of the literature on absolute pitch training up to that time.
