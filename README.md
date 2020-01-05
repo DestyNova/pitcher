@@ -1,6 +1,12 @@
 # Pitcher
 
-An interactive exercise that teaches absolute pitch (a.k.a. perfect pitch) recognition. At least, that's what I hope it will do.
+A set of three small games that teach and test absolute pitch recognition.  At least, that's what I hope it will do.
+
+The apps are:
+
+* Incremental piano, which exercises your estimation of pitch height.
+* Quick pitch, which exercises your estimation of pitch chroma, and
+* Pitch test, which tests you on 20 random notes with no feedback until the end, where you can see your mean absolute semitone error and results for each note.
 
 Try it [here](https://pitcher.overto.eu)!
 
