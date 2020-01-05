@@ -14,3 +14,8 @@ uglifyjs public/IncrementalPiano.js -o public/IncrementalPiano.min.js
 echo "Building QuickPitch..."
 elm make src/QuickPitch.elm --output public/QuickPitch.js
 uglifyjs public/QuickPitch.js -o public/QuickPitch.min.js
+
+# pitch test
+echo "Building PitchTest..."
+elm make src/PitchTest.elm --output public/PitchTest.js
+uglifyjs public/PitchTest.js -o public/PitchTest.min.js

@@ -304,7 +304,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ Grid.container []
-            [ Grid.row []
+            [ Grid.row [ Row.centerMd ]
                 [ Grid.col []
                     [ Card.config [ Card.outlinePrimary ]
                         |> Card.block []
@@ -335,8 +335,8 @@ view model =
                         |> Card.view
                     ]
                 ]
-            , Grid.row []
-                [ Grid.col [ Col.xs2 ]
+            , Grid.row [ Row.centerMd ]
+                [ Grid.col []
                     [ h5 [ Spacing.mb2 ]
                         [ a [ A.href "https://github.com/destynova/pitcher" ] [ Badge.badgeSecondary [] [ text "Source code" ] ]
                         ]
@@ -351,7 +351,7 @@ showStatus model =
     div []
         [ h4 []
             [ Grid.container []
-                [ Grid.row []
+                [ Grid.row [ Row.betweenXs ]
                     (List.map
                         (\note ->
                             Grid.col [ Col.xs1 ]
