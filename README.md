@@ -10,25 +10,12 @@ The apps are:
 
 Try it [here](https://pitcher.overto.eu)!
 
+## Further reading on the topic
+* [Rush's 1989 thesis](https://etd.ohiolink.edu/!etd.send_file?accession=osu1216931520&disposition=inline), a good summary of the literature on absolute pitch training up to that time.
+* [Wong's 2018 paper](https://www.biorxiv.org/content/10.1101/355933v1.full.pdf), showing positive results for a small fraction of the experimental group after between 12 and 40 hours of training each.
+* [Hedger's 2019 paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6759182/) showing impressive results after about 40 hours of training for each student in the experimental group.
+
 ## TODO
-* [X] When button clicked:
-  * [X] select random note (0-88) and add to state
-  * [X] convert note number to frequency using exponential rule
-  * [X] play note
-* [X] Render piano keyboard
-* [X] Game starts with range of 24 semitones (max(1, 24 - level))
-* [X] Render selected range centred on middle C
-* [X] Allow selection start to be moved up/down the piano with cursor keys
-* [X] Allow clicking a note to move the guess region to centre on that note
-* [X] Clicking OK confirms selection and shows either Success or GameOver state
-* [X] Success message increments level, disables OK button, enables Next button
-* [X] Next button sends Play msg
-* [X] Show max score so far + success indicator when confirming the correct answer
-* [X] View: show some kind of mastery icon if level > 24? End game or not?
-* [X] [Publish via Github-pages](https://pitcher.overto.eu)
-* [X] Write article / docs / etc
-* [X] Second game: Quick Pitch identification.
-* [X] Quick Pitch: Get rid of the select dropdown to choose the target note; instead, make it so you just click the appropriate score badge.
 * [ ] Redesign UI to fit better on mobile (maybe make the note list vertical?)
 
 ## Future ideas
@@ -40,6 +27,3 @@ Try it [here](https://pitcher.overto.eu)!
   * clicking OK validates whether chosen pitch is within target range
     * if yes, then next level reduces range as before
     * else game over
-
-## Further reading on the topic
-* [Rush's 1989 thesis](https://etd.ohiolink.edu/!etd.send_file?accession=osu1216931520&disposition=inline), a good summary of the literature on absolute pitch training up to that time.
