@@ -5078,7 +5078,8 @@ var author$project$QuickPitch$init = function (_n0) {
 					},
 					author$project$QuickPitch$noteNames)),
 			targetNote: 44,
-			targetNoteProbability: 25
+			targetNoteProbability: 25,
+			timeout: 1250
 		},
 		elm$core$Platform$Cmd$none);
 };
@@ -6559,7 +6560,7 @@ var author$project$QuickPitch$update = F2(
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
-				default:
+				case 'ChangeTargetProbability':
 					var value = msg.a;
 					var p = A2(
 						elm$core$Maybe$withDefault,
@@ -6569,6 +6570,17 @@ var author$project$QuickPitch$update = F2(
 						_Utils_update(
 							model,
 							{targetNoteProbability: p}),
+						elm$core$Platform$Cmd$none);
+				default:
+					var value = msg.a;
+					var d = A2(
+						elm$core$Maybe$withDefault,
+						1250,
+						elm$core$String$toInt(value));
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{timeout: d}),
 						elm$core$Platform$Cmd$none);
 			}
 		}
@@ -6580,6 +6592,9 @@ var author$project$QuickPitch$ChangeTarget = function (a) {
 };
 var author$project$QuickPitch$ChangeTargetProbability = function (a) {
 	return {$: 'ChangeTargetProbability', a: a};
+};
+var author$project$QuickPitch$ChangeTimeout = function (a) {
+	return {$: 'ChangeTimeout', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Badge$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
@@ -7919,8 +7934,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
 			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
 	});
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs1 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col1);
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col12 = {$: 'Col12'};
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs12 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col12);
 var rundis$elm_bootstrap$Bootstrap$General$Internal$Between = {$: 'Between'};
 var rundis$elm_bootstrap$Bootstrap$General$Internal$HAlign = F2(
 	function (screenSize, align) {
@@ -7992,8 +8005,7 @@ var author$project$QuickPitch$showStatus = function (model) {
 									[
 										A2(
 										rundis$elm_bootstrap$Bootstrap$Grid$col,
-										_List_fromArray(
-											[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs12]),
+										_List_Nil,
 										_List_fromArray(
 											[
 												A2(
@@ -8032,6 +8044,50 @@ var author$project$QuickPitch$showStatus = function (model) {
 																			[
 																				rundis$elm_bootstrap$Bootstrap$Form$Input$onInput(author$project$QuickPitch$ChangeTargetProbability),
 																				rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('25')
+																			]))))))
+													]))
+											])),
+										A2(
+										rundis$elm_bootstrap$Bootstrap$Grid$col,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														rundis$elm_bootstrap$Bootstrap$Form$InputGroup$view(
+														A2(
+															rundis$elm_bootstrap$Bootstrap$Form$InputGroup$successors,
+															_List_fromArray(
+																[
+																	A2(
+																	rundis$elm_bootstrap$Bootstrap$Form$InputGroup$span,
+																	_List_Nil,
+																	_List_fromArray(
+																		[
+																			elm$html$Html$text('milliseconds')
+																		]))
+																]),
+															A2(
+																rundis$elm_bootstrap$Bootstrap$Form$InputGroup$predecessors,
+																_List_fromArray(
+																	[
+																		A2(
+																		rundis$elm_bootstrap$Bootstrap$Form$InputGroup$span,
+																		_List_Nil,
+																		_List_fromArray(
+																			[
+																				elm$html$Html$text('Time to answer')
+																			]))
+																	]),
+																rundis$elm_bootstrap$Bootstrap$Form$InputGroup$config(
+																	rundis$elm_bootstrap$Bootstrap$Form$InputGroup$number(
+																		_List_fromArray(
+																			[
+																				rundis$elm_bootstrap$Bootstrap$Form$Input$onInput(author$project$QuickPitch$ChangeTimeout),
+																				rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('1250')
 																			]))))))
 													]))
 											]))
