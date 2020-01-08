@@ -39,6 +39,7 @@ type alias Model =
     , mode : GameMode
     , scores : Dict String Int
     , targetNoteProbability : Float
+    , timeout : Int
     }
 
 
@@ -84,6 +85,7 @@ init _ =
       , mode = BeforeGame
       , scores = Dict.fromList <| List.map (\note -> ( note, 0 )) noteNames
       , targetNoteProbability = 25
+      , timeout = 1250
       }
     , Cmd.none
     )
@@ -99,6 +101,7 @@ type Msg
     | KeyDown KeyInput
     | ChangeTarget String
     | ChangeTargetProbability String
+    | ChangeTimeout String
 
 
 
@@ -181,6 +184,13 @@ update msg model =
                     Maybe.withDefault 25 (String.toFloat value)
             in
             ( { model | targetNoteProbability = p }, Cmd.none )
+
+        ChangeTimeout value ->
+            let
+                d =
+                    Maybe.withDefault 1250 (String.toInt value)
+            in
+            ( { model | timeout = d }, Cmd.none )
 
 
 addToScore : Int -> Int -> Dict String Int -> Dict String Int
@@ -366,7 +376,7 @@ showStatus model =
                         noteNames
                     )
                 , Grid.row []
-                    [ Grid.col [ Col.xs12 ]
+                    [ Grid.col []
                         [ div []
                             [ InputGroup.config
                                 (InputGroup.number [ Input.onInput ChangeTargetProbability, Input.placeholder "25" ])
@@ -374,6 +384,17 @@ showStatus model =
                                     [ InputGroup.span [] [ text "Target note probability" ] ]
                                 |> InputGroup.successors
                                     [ InputGroup.span [] [ text "%" ] ]
+                                |> InputGroup.view
+                            ]
+                        ]
+                    , Grid.col []
+                        [ div []
+                            [ InputGroup.config
+                                (InputGroup.number [ Input.onInput ChangeTimeout, Input.placeholder "1250" ])
+                                |> InputGroup.predecessors
+                                    [ InputGroup.span [] [ text "Time to answer" ] ]
+                                |> InputGroup.successors
+                                    [ InputGroup.span [] [ text "milliseconds" ] ]
                                 |> InputGroup.view
                             ]
                         ]
