@@ -136,7 +136,7 @@ update msg model =
                 newNote =
                     baseNote + 12 * (octave + 2)
             in
-            ( { model | note = newNote, mode = Waiting }, Cmd.batch [ tone (E.float <| noteToFrequency newNote), Delay.after 1.25 Delay.Second Timeout ] )
+            ( { model | note = newNote, mode = Waiting }, Cmd.batch [ tone (E.float <| noteToFrequency newNote), Delay.after (toFloat model.timeout) Delay.Millisecond Timeout ] )
 
         Timeout ->
             if model.mode == Waiting then
