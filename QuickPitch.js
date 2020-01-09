@@ -5635,7 +5635,7 @@ var author$project$QuickPitch$subscriptions = function (model) {
 				A2(elm$json$Json$Decode$map, author$project$QuickPitch$KeyDown, author$project$QuickPitch$keyDecoder))
 			]));
 };
-var andrewMacmurray$elm_delay$Delay$Second = {$: 'Second'};
+var andrewMacmurray$elm_delay$Delay$Millisecond = {$: 'Millisecond'};
 var andrewMacmurray$elm_delay$Delay$Duration = F2(
 	function (a, b) {
 		return {$: 'Duration', a: a, b: b};
@@ -5653,6 +5653,7 @@ var andrewMacmurray$elm_delay$Delay$after_ = F2(
 			elm$core$Process$sleep(time));
 	});
 var andrewMacmurray$elm_delay$Delay$Minute = {$: 'Minute'};
+var andrewMacmurray$elm_delay$Delay$Second = {$: 'Second'};
 var andrewMacmurray$elm_delay$Delay$toMillis = function (_n0) {
 	var t = _n0.a;
 	var u = _n0.b;
@@ -6506,7 +6507,7 @@ var author$project$QuickPitch$update = F2(
 									author$project$QuickPitch$tone(
 									elm$json$Json$Encode$float(
 										author$project$QuickPitch$noteToFrequency(newNote))),
-									A3(andrewMacmurray$elm_delay$Delay$after, 1.25, andrewMacmurray$elm_delay$Delay$Second, author$project$QuickPitch$Timeout)
+									A3(andrewMacmurray$elm_delay$Delay$after, model.timeout, andrewMacmurray$elm_delay$Delay$Millisecond, author$project$QuickPitch$Timeout)
 								])));
 				case 'Timeout':
 					if (_Utils_eq(model.mode, author$project$QuickPitch$Waiting)) {
