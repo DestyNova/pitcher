@@ -119,7 +119,7 @@ update msg model =
 
                 m =
                     if lower <= model.note && model.note <= upper then
-                        { model | level = model.level + 1, mode = Ready True }
+                        { model | level = model.level + 1, bestScore = Basics.max model.bestScore model.level, mode = Ready True }
 
                     else if model.level == 1 then
                         { model | mode = GameOver, bestScore = Basics.max model.bestScore model.level }
