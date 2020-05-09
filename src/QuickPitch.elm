@@ -12,7 +12,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
-import Browser.Events exposing (..)
+import Browser.Events exposing (onKeyDown)
 import Delay
 import Dict exposing (Dict)
 import Html exposing (..)

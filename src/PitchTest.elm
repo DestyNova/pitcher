@@ -13,7 +13,7 @@ import Bootstrap.Grid.Row as Row
 import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
-import Browser.Events exposing (..)
+import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
 import Html.Attributes as A
 import Html.Events exposing (onClick)
