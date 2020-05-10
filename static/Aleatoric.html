@@ -19,7 +19,7 @@
       var update = function() {
         if(playing) {
           var rnd = Math.random() * 2600 + 50
-          synth.triggerAttackRelease(rnd, '16n')
+          synth.triggerAttackRelease(rnd, '16n', "+0", 0.5)
         }
         document.querySelector('#play').textContent = playing ? "Stop" : "Play"
         window.setTimeout(update, 400)
