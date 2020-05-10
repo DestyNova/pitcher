@@ -13,13 +13,13 @@
     <i>Yoinked / adapted from the <a href="https://tonejs.github.io/">Tone.js docs</a></i>
 
     <script>
-      var synth = new Tone.FMSynth().toMaster()
+      var synth = new Tone.FMSynth({"oscillator": {"type": "sine"}}).toMaster()
       playing = false
 
       var update = function() {
         if(playing) {
           var rnd = Math.random() * 2600 + 50
-          synth.triggerAttackRelease(rnd, '16n', "+0", 0.5)
+          synth.triggerAttackRelease(rnd, '12n', "+0", 0.5)
         }
         document.querySelector('#play').textContent = playing ? "Stop" : "Play"
         window.setTimeout(update, 400)
