@@ -1,6 +1,6 @@
 var context;
 
-var volume = 0.075;
+var volume = 0.1;
 
 function tone(f) {
   // reuse old context to see if we can avoid freezing the browser engine
