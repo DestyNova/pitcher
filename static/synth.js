@@ -23,6 +23,7 @@ function tone(f) {
 function createOscillator(f, type, context, now) {
   var osc = context.createOscillator();
   var gainOsc = context.createGain();
+  gainOsc.gain.value = 0.25;
 
   osc.type = type;
   osc.frequency.value = f;
@@ -30,7 +31,7 @@ function createOscillator(f, type, context, now) {
   var modOsc = context.createOscillator();
   var modGain = context.createGain();
   modOsc.frequency.value = f;
-  modGain.gain.value = f * 0.5 * 0.01
+  modGain.gain.value = f * 0.25 * 0.01
 
   // filters
   hiFilter = context.createBiquadFilter();
@@ -49,7 +50,7 @@ function createOscillator(f, type, context, now) {
 
   gainOsc.gain.setValueAtTime(0.001, now);
   // console.log("gainOsc.gain.exponentialRampToValueAtTime:", gainOsc.gain.exponentialRampToValueAtTime);
-  gainOsc.gain.exponentialRampToValueAtTime(1.0, now + 0.025);
+  gainOsc.gain.exponentialRampToValueAtTime(0.25, now + 0.025);
   gainOsc.gain.exponentialRampToValueAtTime(0.001, now + 2);
 
   return osc;
