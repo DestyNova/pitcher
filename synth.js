@@ -1,5 +1,7 @@
 var context;
 
+var volume = 0.075;
+
 function tone(f) {
   // reuse old context to see if we can avoid freezing the browser engine
   // on Android
@@ -23,7 +25,7 @@ function tone(f) {
 function createOscillator(f, type, context, now) {
   var osc = context.createOscillator();
   var gainOsc = context.createGain();
-  gainOsc.gain.value = 0.25;
+  gainOsc.gain.value = volume;
 
   osc.type = type;
   osc.frequency.value = f;
@@ -50,7 +52,7 @@ function createOscillator(f, type, context, now) {
 
   gainOsc.gain.setValueAtTime(0.001, now);
   // console.log("gainOsc.gain.exponentialRampToValueAtTime:", gainOsc.gain.exponentialRampToValueAtTime);
-  gainOsc.gain.exponentialRampToValueAtTime(0.25, now + 0.025);
+  gainOsc.gain.exponentialRampToValueAtTime(volume, now + 0.025);
   gainOsc.gain.exponentialRampToValueAtTime(0.001, now + 2);
 
   return osc;
