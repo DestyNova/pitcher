@@ -5512,7 +5512,9 @@ var $author$project$PitchTest$update = F2(
 					var _v1 = $author$project$PitchTest$init(_Utils_Tuple0);
 					var startState = _v1.a;
 					var $temp$msg = $author$project$PitchTest$NextNote,
-						$temp$model = startState;
+						$temp$model = _Utils_update(
+						startState,
+						{maxRounds: model.maxRounds});
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
