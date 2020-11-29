@@ -82,7 +82,7 @@ update msg model =
                 ( startState, _ ) =
                     init ()
             in
-            update NextNote startState
+            update NextNote { startState | maxRounds = model.maxRounds }
 
         NextNote ->
             ( model, Random.generate TargetNote (Random.int 24 64) )
