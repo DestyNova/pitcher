@@ -3,8 +3,6 @@ var context;
 var volume = 0.1;
 
 function tone(f) {
-  // reuse old context to see if we can avoid freezing the browser engine
-  // on Android
   if(context) {
     context.close();
   }
@@ -15,7 +13,6 @@ function tone(f) {
   var osc = createOscillator(f, "triangle", context, now);
   var osc2 = createOscillator(f, "square", context, now);
 
-  // console.log("osc:", osc);
   osc.start(now);
   osc2.start(now);
   osc.stop(now + 2);
@@ -50,10 +47,12 @@ function createOscillator(f, type, context, now) {
   loFilter.connect(gainOsc);
   gainOsc.connect(context.destination);
 
+  const dur = 0.75;
   gainOsc.gain.setValueAtTime(0.001, now);
+  gainOsc.gain.setValueAtTime(0, now + dur + 0.01);
   // console.log("gainOsc.gain.exponentialRampToValueAtTime:", gainOsc.gain.exponentialRampToValueAtTime);
   gainOsc.gain.exponentialRampToValueAtTime(volume, now + 0.025);
-  gainOsc.gain.exponentialRampToValueAtTime(0.001, now + 2);
+  gainOsc.gain.exponentialRampToValueAtTime(0.0001, now + dur);
 
   return osc;
 }
