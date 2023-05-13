@@ -2,11 +2,14 @@ var context;
 
 var volume = 0.1;
 
+function autoCleanup(osc) {
+  osc.onended = function() { osc.disconnect(); };
+}
+
 function tone(f) {
-  if(context) {
-    context.close();
+  if(!context) {
+    context = new AudioContext();
   }
-  context = new AudioContext();
 
   var now = context.currentTime;
 
@@ -21,13 +24,16 @@ function tone(f) {
 
 function createOscillator(f, type, context, now) {
   var osc = context.createOscillator();
+  autoCleanup(osc);
   var gainOsc = context.createGain();
+  autoCleanup(gainOsc);
   gainOsc.gain.value = volume;
 
   osc.type = type;
   osc.frequency.value = f;
 
   var modOsc = context.createOscillator();
+  autoCleanup(modOsc);
   var modGain = context.createGain();
   modOsc.frequency.value = f;
   modGain.gain.value = f * 0.25 * 0.01
