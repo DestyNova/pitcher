@@ -182,11 +182,18 @@ update msg model =
             ( m, Cmd.none )
 
         KeyDown k ->
-            case ( k, model.mode) of
-                ( Continue, Waiting ) -> update Submit model
-                ( Continue, GameStarted ) -> update Play model
-                ( Continue, Ready _ ) -> update Play model
-                _ -> ( model, Cmd.none )
+            case ( k, model.mode ) of
+                ( Continue, Waiting ) ->
+                    update Submit model
+
+                ( Continue, GameStarted ) ->
+                    update Play model
+
+                ( Continue, Ready _ ) ->
+                    update Play model
+
+                _ ->
+                    ( model, Cmd.none )
 
         ChangeTarget noteName ->
             let
