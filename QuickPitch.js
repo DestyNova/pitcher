@@ -5313,8 +5313,9 @@ var $author$project$QuickPitch$noteNames = _List_fromArray(
 var $author$project$QuickPitch$init = function (_v0) {
 	return _Utils_Tuple2(
 		{
+			chordSize: 1,
 			mode: $author$project$QuickPitch$BeforeGame,
-			note: 44,
+			playedNote: false,
 			scores: $elm$core$Dict$fromList(
 				A2(
 					$elm$core$List$map,
@@ -5323,7 +5324,7 @@ var $author$project$QuickPitch$init = function (_v0) {
 					},
 					$author$project$QuickPitch$noteNames)),
 			targetNote: 44,
-			targetNoteProbability: 25,
+			targetNoteProbability: 50,
 			timeout: 1250
 		},
 		$elm$core$Platform$Cmd$none);
@@ -5641,6 +5642,7 @@ var $andrewMacmurray$elm_delay$Delay$Millisecond = {$: 'Millisecond'};
 var $author$project$QuickPitch$NextNote = function (a) {
 	return {$: 'NextNote', a: a};
 };
+var $author$project$QuickPitch$Play = {$: 'Play'};
 var $author$project$QuickPitch$Ready = function (a) {
 	return {$: 'Ready', a: a};
 };
@@ -6371,6 +6373,46 @@ var $elm$random$Random$int = F2(
 				}
 			});
 	});
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed) {
+				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+			});
+	});
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$QuickPitch$findIndexRec = F3(
 	function (items, y, i) {
 		findIndexRec:
@@ -6442,6 +6484,207 @@ var $elm$random$Random$pair = F2(
 			genA,
 			genB);
 	});
+var $author$project$QuickPitch$playTones = _Platform_outgoingPort('playTones', $elm$core$Basics$identity);
+var $elm$random$Random$maxInt = 2147483647;
+var $elm$random$Random$minInt = -2147483648;
+var $elm_community$random_extra$Random$List$anyInt = A2($elm$random$Random$int, $elm$random$Random$minInt, $elm$random$Random$maxInt);
+var $elm$random$Random$map3 = F4(
+	function (func, _v0, _v1, _v2) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		var genC = _v2.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v3 = genA(seed0);
+				var a = _v3.a;
+				var seed1 = _v3.b;
+				var _v4 = genB(seed1);
+				var b = _v4.a;
+				var seed2 = _v4.b;
+				var _v5 = genC(seed2);
+				var c = _v5.a;
+				var seed3 = _v5.b;
+				return _Utils_Tuple2(
+					A3(func, a, b, c),
+					seed3);
+			});
+	});
+var $elm$core$Bitwise$or = _Bitwise_or;
+var $elm$random$Random$independentSeed = $elm$random$Random$Generator(
+	function (seed0) {
+		var makeIndependentSeed = F3(
+			function (state, b, c) {
+				return $elm$random$Random$next(
+					A2($elm$random$Random$Seed, state, (1 | (b ^ c)) >>> 0));
+			});
+		var gen = A2($elm$random$Random$int, 0, 4294967295);
+		return A2(
+			$elm$random$Random$step,
+			A4($elm$random$Random$map3, makeIndependentSeed, gen, gen, gen),
+			seed0);
+	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$core$List$sortBy = _List_sortBy;
+var $elm_community$random_extra$Random$List$shuffle = function (list) {
+	return A2(
+		$elm$random$Random$map,
+		function (independentSeed) {
+			return A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2(
+					$elm$core$List$sortBy,
+					$elm$core$Tuple$second,
+					A3(
+						$elm$core$List$foldl,
+						F2(
+							function (item, _v0) {
+								var acc = _v0.a;
+								var seed = _v0.b;
+								var _v1 = A2($elm$random$Random$step, $elm_community$random_extra$Random$List$anyInt, seed);
+								var tag = _v1.a;
+								var nextSeed = _v1.b;
+								return _Utils_Tuple2(
+									A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(item, tag),
+										acc),
+									nextSeed);
+							}),
+						_Utils_Tuple2(_List_Nil, independentSeed),
+						list).a));
+		},
+		$elm$random$Random$independentSeed);
+};
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
 var $elm$core$String$toFloat = _String_toFloat;
 var $author$project$QuickPitch$tone = _Platform_outgoingPort('tone', $elm$core$Basics$identity);
 var $elm$core$Maybe$withDefault = F2(
@@ -6485,36 +6728,50 @@ var $author$project$QuickPitch$update = F2(
 								A2($elm$random$Random$float, 0, 100),
 								A2(
 									$elm$random$Random$pair,
-									A2($elm$random$Random$int, 0, 3),
-									A2($elm$random$Random$int, 1, 11)))));
+									A2(
+										$elm$random$Random$list,
+										12,
+										A2($elm$random$Random$int, 2, 5)),
+									$elm_community$random_extra$Random$List$shuffle(
+										A2($elm$core$List$range, 1, 11))))));
 				case 'NextNote':
 					var _v1 = msg.a;
 					var targetCheck = _v1.a;
 					var _v2 = _v1.b;
-					var octave = _v2.a;
-					var note = _v2.b;
-					var baseNote = A2(
-						$elm$core$Basics$modBy,
-						12,
-						(_Utils_cmp(targetCheck, model.targetNoteProbability) < 0) ? model.targetNote : note);
-					var newNote = baseNote + (12 * (octave + 2));
+					var octaves = _v2.a;
+					var notes = _v2.b;
+					var playNote = _Utils_cmp(targetCheck, model.targetNoteProbability) < 0;
+					var chord = A2(
+						$elm$core$List$take,
+						model.chordSize,
+						_Utils_ap(
+							playNote ? _List_fromArray(
+								[0]) : _List_Nil,
+							notes));
+					var frequencies = A3(
+						$elm$core$List$map2,
+						F2(
+							function (octave, note) {
+								return $author$project$QuickPitch$noteToFrequency(
+									A2($elm$core$Basics$modBy, 12, model.targetNote + note) + (12 * octave));
+							}),
+						octaves,
+						chord);
+					var _v3 = A2($elm$core$Debug$log, 'frequencies:', frequencies);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{mode: $author$project$QuickPitch$Waiting, note: newNote}),
+							{mode: $author$project$QuickPitch$Waiting, playedNote: playNote}),
 						$elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
-									$author$project$QuickPitch$tone(
-									$elm$json$Json$Encode$float(
-										$author$project$QuickPitch$noteToFrequency(newNote))),
+									$author$project$QuickPitch$playTones(
+									A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$float, frequencies)),
 									A3($andrewMacmurray$elm_delay$Delay$after, model.timeout, $andrewMacmurray$elm_delay$Delay$Millisecond, $author$project$QuickPitch$Timeout)
 								])));
 				case 'Timeout':
 					if (_Utils_eq(model.mode, $author$project$QuickPitch$Waiting)) {
-						var m = _Utils_eq(
-							A2($elm$core$Basics$modBy, 12, model.note),
-							A2($elm$core$Basics$modBy, 12, model.targetNote)) ? _Utils_update(
+						var m = model.playedNote ? _Utils_update(
 							model,
 							{
 								mode: $author$project$QuickPitch$Ready(false),
@@ -6529,9 +6786,7 @@ var $author$project$QuickPitch$update = F2(
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					}
 				case 'Submit':
-					var m = _Utils_eq(
-						A2($elm$core$Basics$modBy, 12, model.note),
-						A2($elm$core$Basics$modBy, 12, model.targetNote)) ? _Utils_update(
+					var m = model.playedNote ? _Utils_update(
 						model,
 						{
 							mode: $author$project$QuickPitch$Ready(true),
@@ -6545,15 +6800,42 @@ var $author$project$QuickPitch$update = F2(
 					return _Utils_Tuple2(m, $elm$core$Platform$Cmd$none);
 				case 'KeyDown':
 					var k = msg.a;
-					if (_Utils_eq(k, $author$project$QuickPitch$Continue) && _Utils_eq(model.mode, $author$project$QuickPitch$Waiting)) {
-						var $temp$msg = $author$project$QuickPitch$Submit,
-							$temp$model = model;
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
-					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					var _v4 = _Utils_Tuple2(k, model.mode);
+					_v4$3:
+					while (true) {
+						if (_v4.a.$ === 'Continue') {
+							switch (_v4.b.$) {
+								case 'Waiting':
+									var _v5 = _v4.a;
+									var _v6 = _v4.b;
+									var $temp$msg = $author$project$QuickPitch$Submit,
+										$temp$model = model;
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 'GameStarted':
+									var _v7 = _v4.a;
+									var _v8 = _v4.b;
+									var $temp$msg = $author$project$QuickPitch$Play,
+										$temp$model = model;
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 'Ready':
+									var _v9 = _v4.a;
+									var $temp$msg = $author$project$QuickPitch$Play,
+										$temp$model = model;
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								default:
+									break _v4$3;
+							}
+						} else {
+							break _v4$3;
+						}
 					}
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				case 'ChangeTarget':
 					var noteName = msg.a;
 					var n = $author$project$QuickPitch$nameToNote(noteName);
@@ -6573,7 +6855,7 @@ var $author$project$QuickPitch$update = F2(
 							model,
 							{targetNoteProbability: p}),
 						$elm$core$Platform$Cmd$none);
-				default:
+				case 'ChangeTimeout':
 					var value = msg.a;
 					var d = A2(
 						$elm$core$Maybe$withDefault,
@@ -6584,10 +6866,20 @@ var $author$project$QuickPitch$update = F2(
 							model,
 							{timeout: d}),
 						$elm$core$Platform$Cmd$none);
+				default:
+					var value = msg.a;
+					var d = A2(
+						$elm$core$Maybe$withDefault,
+						1,
+						$elm$core$String$toInt(value));
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{chordSize: d}),
+						$elm$core$Platform$Cmd$none);
 			}
 		}
 	});
-var $author$project$QuickPitch$Play = {$: 'Play'};
 var $author$project$QuickPitch$Start = {$: 'Start'};
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
@@ -6911,10 +7203,6 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
 var $elm$html$Html$Attributes$classList = function (classes) {
 	return $elm$html$Html$Attributes$class(
 		A2(
@@ -7873,6 +8161,9 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			$rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
+var $author$project$QuickPitch$ChangeChordSize = function (a) {
+	return {$: 'ChangeChordSize', a: a};
+};
 var $author$project$QuickPitch$ChangeTarget = function (a) {
 	return {$: 'ChangeTarget', a: a};
 };
@@ -8396,7 +8687,7 @@ var $author$project$QuickPitch$showStatus = function (model) {
 																		_List_fromArray(
 																			[
 																				$rundis$elm_bootstrap$Bootstrap$Form$Input$onInput($author$project$QuickPitch$ChangeTargetProbability),
-																				$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('25')
+																				$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('50')
 																			]))))))
 													]))
 											])),
@@ -8420,7 +8711,7 @@ var $author$project$QuickPitch$showStatus = function (model) {
 																	_List_Nil,
 																	_List_fromArray(
 																		[
-																			$elm$html$Html$text('milliseconds')
+																			$elm$html$Html$text('ms')
 																		]))
 																]),
 															A2(
@@ -8442,6 +8733,38 @@ var $author$project$QuickPitch$showStatus = function (model) {
 																				$rundis$elm_bootstrap$Bootstrap$Form$Input$onInput($author$project$QuickPitch$ChangeTimeout),
 																				$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('1250')
 																			]))))))
+													]))
+											])),
+										A2(
+										$rundis$elm_bootstrap$Bootstrap$Grid$col,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$rundis$elm_bootstrap$Bootstrap$Form$InputGroup$view(
+														A2(
+															$rundis$elm_bootstrap$Bootstrap$Form$InputGroup$predecessors,
+															_List_fromArray(
+																[
+																	A2(
+																	$rundis$elm_bootstrap$Bootstrap$Form$InputGroup$span,
+																	_List_Nil,
+																	_List_fromArray(
+																		[
+																			$elm$html$Html$text('Notes in chord')
+																		]))
+																]),
+															$rundis$elm_bootstrap$Bootstrap$Form$InputGroup$config(
+																$rundis$elm_bootstrap$Bootstrap$Form$InputGroup$number(
+																	_List_fromArray(
+																		[
+																			$rundis$elm_bootstrap$Bootstrap$Form$Input$onInput($author$project$QuickPitch$ChangeChordSize),
+																			$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('1')
+																		])))))
 													]))
 											]))
 									]))

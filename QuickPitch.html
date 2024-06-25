@@ -20,6 +20,10 @@
     tone(data);
   });
 
+  app.ports.playTones.subscribe(function(data) {
+    playTones(data);
+  });
+
   </script>
 </body>
 </html>
