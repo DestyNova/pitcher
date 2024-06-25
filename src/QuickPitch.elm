@@ -21,6 +21,7 @@ import Html.Events exposing (onClick)
 import Json.Decode as D
 import Json.Encode as E
 import Random
+import Random.List exposing (shuffle)
 import Svg as S
 import Svg.Attributes exposing (..)
 
@@ -34,12 +35,13 @@ main =
 
 
 type alias Model =
-    { note : Int
+    { playedNote : Bool
     , targetNote : Int
     , mode : GameMode
     , scores : Dict String Int
     , targetNoteProbability : Float
     , timeout : Int
+    , chordSize : Int
     }
 
 
@@ -80,12 +82,13 @@ toKeyInput s =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { note = 44
+    ( { playedNote = False
       , targetNote = 44
       , mode = BeforeGame
       , scores = Dict.fromList <| List.map (\note -> ( note, 0 )) noteNames
-      , targetNoteProbability = 25
+      , targetNoteProbability = 50
       , timeout = 1250
+      , chordSize = 1
       }
     , Cmd.none
     )
@@ -96,12 +99,13 @@ type Msg
     | TargetNote Int
     | Play
     | Timeout
-    | NextNote ( Float, ( Int, Int ) )
+    | NextNote ( Float, ( List Int, List Int ) )
     | Submit
     | KeyDown KeyInput
     | ChangeTarget String
     | ChangeTargetProbability String
     | ChangeTimeout String
+    | ChangeChordSize String
 
 
 
@@ -121,28 +125,41 @@ update msg model =
             -- 1. chance for target note: 25%, else, uniform among the other 11
             -- 2. octave: +(0, 1, 2, 3)
             -- 3. note (if not target)
-            ( model, Random.generate NextNote (Random.pair (Random.float 0 100) (Random.pair (Random.int 0 3) (Random.int 1 11))) )
+            ( model, Random.generate NextNote (Random.pair (Random.float 0 100) (Random.pair (Random.list 12 (Random.int 2 5)) (shuffle (List.range 1 11)))) )
 
-        NextNote ( targetCheck, ( octave, note ) ) ->
+        NextNote ( targetCheck, ( octaves, notes ) ) ->
             let
-                baseNote =
-                    modBy 12 <|
-                        if targetCheck < model.targetNoteProbability then
-                            model.targetNote
+                playNote =
+                    targetCheck < model.targetNoteProbability
 
-                        else
-                            note
+                chord =
+                    List.take model.chordSize <|
+                        (if playNote then
+                            [ 0 ]
 
-                newNote =
-                    baseNote + 12 * (octave + 2)
+                         else
+                            []
+                        )
+                            ++ notes
+
+                frequencies =
+                    List.map2
+                        (\octave note ->
+                            noteToFrequency (modBy 12 (model.targetNote + note) + 12 * octave)
+                        )
+                        octaves
+                        chord
+
+                _ =
+                    Debug.log "frequencies:" frequencies
             in
-            ( { model | note = newNote, mode = Waiting }, Cmd.batch [ tone (E.float <| noteToFrequency newNote), Delay.after (toFloat model.timeout) Delay.Millisecond Timeout ] )
+            ( { model | playedNote = playNote, mode = Waiting }, Cmd.batch [ playTones (E.list E.float frequencies), Delay.after (toFloat model.timeout) Delay.Millisecond Timeout ] )
 
         Timeout ->
             if model.mode == Waiting then
                 let
                     m =
-                        if modBy 12 model.note == modBy 12 model.targetNote then
+                        if model.playedNote then
                             { model | scores = addToScore model.targetNote -1 model.scores, mode = Ready False }
 
                         else
@@ -156,7 +173,7 @@ update msg model =
         Submit ->
             let
                 m =
-                    if modBy 12 model.note == modBy 12 model.targetNote then
+                    if model.playedNote then
                         { model | scores = addToScore model.targetNote 1 model.scores, mode = Ready True }
 
                     else
@@ -165,11 +182,11 @@ update msg model =
             ( m, Cmd.none )
 
         KeyDown k ->
-            if k == Continue && model.mode == Waiting then
-                update Submit model
-
-            else
-                ( model, Cmd.none )
+            case ( k, model.mode) of
+                ( Continue, Waiting ) -> update Submit model
+                ( Continue, GameStarted ) -> update Play model
+                ( Continue, Ready _ ) -> update Play model
+                _ -> ( model, Cmd.none )
 
         ChangeTarget noteName ->
             let
@@ -191,6 +208,13 @@ update msg model =
                     Maybe.withDefault 1250 (String.toInt value)
             in
             ( { model | timeout = d }, Cmd.none )
+
+        ChangeChordSize value ->
+            let
+                d =
+                    Maybe.withDefault 1 (String.toInt value)
+            in
+            ( { model | chordSize = d }, Cmd.none )
 
 
 addToScore : Int -> Int -> Dict String Int -> Dict String Int
@@ -227,6 +251,9 @@ subscriptions model =
 
 
 port tone : E.Value -> Cmd msg
+
+
+port playTones : E.Value -> Cmd msg
 
 
 
@@ -379,7 +406,7 @@ showStatus model =
                     [ Grid.col []
                         [ div []
                             [ InputGroup.config
-                                (InputGroup.number [ Input.onInput ChangeTargetProbability, Input.placeholder "25" ])
+                                (InputGroup.number [ Input.onInput ChangeTargetProbability, Input.placeholder "50" ])
                                 |> InputGroup.predecessors
                                     [ InputGroup.span [] [ text "Target note probability" ] ]
                                 |> InputGroup.successors
@@ -394,7 +421,16 @@ showStatus model =
                                 |> InputGroup.predecessors
                                     [ InputGroup.span [] [ text "Time to answer" ] ]
                                 |> InputGroup.successors
-                                    [ InputGroup.span [] [ text "milliseconds" ] ]
+                                    [ InputGroup.span [] [ text "ms" ] ]
+                                |> InputGroup.view
+                            ]
+                        ]
+                    , Grid.col []
+                        [ div []
+                            [ InputGroup.config
+                                (InputGroup.number [ Input.onInput ChangeChordSize, Input.placeholder "1" ])
+                                |> InputGroup.predecessors
+                                    [ InputGroup.span [] [ text "Notes in chord" ] ]
                                 |> InputGroup.view
                             ]
                         ]

@@ -6,6 +6,10 @@ function autoCleanup(osc) {
   osc.onended = function() { osc.disconnect(); };
 }
 
+function playTones(fs) {
+  fs.forEach(f => tone(f));
+}
+
 function tone(f) {
   if(!context) {
     context = new AudioContext();
