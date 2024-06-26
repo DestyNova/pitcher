@@ -55,6 +55,7 @@ type GameMode
 
 type KeyInput
     = Continue
+    | SelectNextTarget
     | Other
 
 
@@ -71,6 +72,12 @@ toKeyInput s =
 
         "X" ->
             Continue
+
+        "n" ->
+            SelectNextTarget
+
+        "N" ->
+            SelectNextTarget
 
         _ ->
             Other
@@ -191,6 +198,9 @@ update msg model =
 
                 ( Continue, Ready _ ) ->
                     update Play model
+
+                ( SelectNextTarget, _ ) ->
+                    update (TargetNote (44 + (modBy 12 <| model.targetNote - 44 + 5))) model
 
                 _ ->
                     ( model, Cmd.none )
