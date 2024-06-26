@@ -4,11 +4,13 @@ A set of three small games that teach and test absolute pitch recognition.  At l
 
 The apps are:
 
-* Quick pitch, which exercises your estimation of pitch chroma under time pressure,
+* Quick pitch, which trains your pitch chroma identification under time pressure
     * Select a target note, then hit the `x` key produce a random note and either `x` again (quickly!) to confirm that it matches the target note, or wait for the button to go green if not.
     * Hit the `n` key to jump to the next note in the circle of fourths
     * Increase the "notes in chord" value above 1 to increase the difficulty by playing multiple notes simultaneously. I found it difficult to answer quickly even with just two notes.
-* Incremental piano, which exercises your estimation of pitch height AND pitch chroma, and
+    * If it's too hard, increase the "target note probability" and "time to answer" values.
+    * If it's too easy, decrease those values. I suspect decreasing the time to answer is the most effective way to improve.
+* Incremental piano, which exercises your estimation of pitch height AND pitch chroma (but with no time pressure), and
 * Pitch test, which tests you on a series of random notes with no feedback until the end, where you can see your mean absolute semitone error and results for each note.
 
 Try it [here](https://pitcher.overto.eu)!
@@ -20,6 +22,7 @@ Try it [here](https://pitcher.overto.eu)!
 
 ## TODO
 * [ ] Redesign UI with Tailwind or similar so it's responsive and better looking
+* [ ] Add instructions in-game
 
 ## Future ideas
 * Generate several different timbres of note, rather than the same simple triangle+square wave oscillators
