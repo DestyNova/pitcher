@@ -5337,12 +5337,17 @@ var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$QuickPitch$Continue = {$: 'Continue'};
 var $author$project$QuickPitch$Other = {$: 'Other'};
+var $author$project$QuickPitch$SelectNextTarget = {$: 'SelectNextTarget'};
 var $author$project$QuickPitch$toKeyInput = function (s) {
 	switch (s) {
 		case 'x':
 			return $author$project$QuickPitch$Continue;
 		case 'X':
 			return $author$project$QuickPitch$Continue;
+		case 'n':
+			return $author$project$QuickPitch$SelectNextTarget;
+		case 'N':
+			return $author$project$QuickPitch$SelectNextTarget;
 		default:
 			return $author$project$QuickPitch$Other;
 	}
@@ -6801,38 +6806,47 @@ var $author$project$QuickPitch$update = F2(
 				case 'KeyDown':
 					var k = msg.a;
 					var _v4 = _Utils_Tuple2(k, model.mode);
-					_v4$3:
+					_v4$4:
 					while (true) {
-						if (_v4.a.$ === 'Continue') {
-							switch (_v4.b.$) {
-								case 'Waiting':
-									var _v5 = _v4.a;
-									var _v6 = _v4.b;
-									var $temp$msg = $author$project$QuickPitch$Submit,
-										$temp$model = model;
-									msg = $temp$msg;
-									model = $temp$model;
-									continue update;
-								case 'GameStarted':
-									var _v7 = _v4.a;
-									var _v8 = _v4.b;
-									var $temp$msg = $author$project$QuickPitch$Play,
-										$temp$model = model;
-									msg = $temp$msg;
-									model = $temp$model;
-									continue update;
-								case 'Ready':
-									var _v9 = _v4.a;
-									var $temp$msg = $author$project$QuickPitch$Play,
-										$temp$model = model;
-									msg = $temp$msg;
-									model = $temp$model;
-									continue update;
-								default:
-									break _v4$3;
-							}
-						} else {
-							break _v4$3;
+						switch (_v4.a.$) {
+							case 'Continue':
+								switch (_v4.b.$) {
+									case 'Waiting':
+										var _v5 = _v4.a;
+										var _v6 = _v4.b;
+										var $temp$msg = $author$project$QuickPitch$Submit,
+											$temp$model = model;
+										msg = $temp$msg;
+										model = $temp$model;
+										continue update;
+									case 'GameStarted':
+										var _v7 = _v4.a;
+										var _v8 = _v4.b;
+										var $temp$msg = $author$project$QuickPitch$Play,
+											$temp$model = model;
+										msg = $temp$msg;
+										model = $temp$model;
+										continue update;
+									case 'Ready':
+										var _v9 = _v4.a;
+										var $temp$msg = $author$project$QuickPitch$Play,
+											$temp$model = model;
+										msg = $temp$msg;
+										model = $temp$model;
+										continue update;
+									default:
+										break _v4$4;
+								}
+							case 'SelectNextTarget':
+								var _v10 = _v4.a;
+								var $temp$msg = $author$project$QuickPitch$TargetNote(
+									44 + A2($elm$core$Basics$modBy, 12, (model.targetNote - 44) + 5)),
+									$temp$model = model;
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							default:
+								break _v4$4;
 						}
 					}
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
