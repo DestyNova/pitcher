@@ -445,7 +445,12 @@ showStatus model =
                     , Grid.col []
                         [ div []
                             [ InputGroup.config
-                                (InputGroup.number [ Input.onInput ChangeChordSize, Input.placeholder "1" ])
+                                (InputGroup.number
+                                    [ Input.onInput ChangeChordSize
+                                    , Input.placeholder "1"
+                                    , Input.attrs [ A.attribute "min" "1", A.attribute "max" "12" ]
+                                    ]
+                                )
                                 |> InputGroup.predecessors
                                     [ InputGroup.span [] [ text "Notes in chord" ] ]
                                 |> InputGroup.view
