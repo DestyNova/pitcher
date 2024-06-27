@@ -8187,6 +8187,20 @@ var $author$project$QuickPitch$ChangeTargetProbability = function (a) {
 var $author$project$QuickPitch$ChangeTimeout = function (a) {
 	return {$: 'ChangeTimeout', a: a};
 };
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Form$Input$attrs = function (attrs_) {
+	return $rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs(attrs_);
+};
 var $rundis$elm_bootstrap$Bootstrap$General$Internal$Between = {$: 'Between'};
 var $rundis$elm_bootstrap$Bootstrap$Grid$Row$betweenXs = A2($rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowHAlign, $rundis$elm_bootstrap$Bootstrap$General$Internal$XS, $rundis$elm_bootstrap$Bootstrap$General$Internal$Between);
 var $rundis$elm_bootstrap$Bootstrap$Form$InputGroup$Config = function (a) {
@@ -8777,7 +8791,13 @@ var $author$project$QuickPitch$showStatus = function (model) {
 																	_List_fromArray(
 																		[
 																			$rundis$elm_bootstrap$Bootstrap$Form$Input$onInput($author$project$QuickPitch$ChangeChordSize),
-																			$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('1')
+																			$rundis$elm_bootstrap$Bootstrap$Form$Input$placeholder('1'),
+																			$rundis$elm_bootstrap$Bootstrap$Form$Input$attrs(
+																			_List_fromArray(
+																				[
+																					A2($elm$html$Html$Attributes$attribute, 'min', '1'),
+																					A2($elm$html$Html$Attributes$attribute, 'max', '12')
+																				]))
 																		])))))
 													]))
 											]))
