@@ -7,7 +7,7 @@ The apps are:
 * Quick pitch, which trains your pitch chroma identification under time pressure
     * Select a target note, then hit the `x` key produce a random note and either `x` again (quickly!) to confirm that it matches the target note, or wait for the button to go green if not.
     * Hit the `n` key to jump to the next note in the circle of fourths
-    * Increase the "notes in chord" value above 1 to increase the difficulty by playing multiple notes simultaneously. I found it difficult to answer quickly even with just two notes.
+    * Increase the "notes in chord" value above 1 to increase the difficulty by playing multiple notes simultaneously. At first, I found it difficult to answer quickly even with just two notes.
     * If it's too hard, increase the "target note probability" and "time to answer" values.
     * If it's too easy, decrease those values. I suspect decreasing the time to answer is the most effective way to improve.
 * Incremental piano, which exercises your estimation of pitch height AND pitch chroma (but with no time pressure), and
