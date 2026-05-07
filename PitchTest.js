@@ -6789,6 +6789,7 @@ var $author$project$PitchTest$showControls = function (model) {
 					]))
 			]));
 };
+var $elm$html$Html$h6 = _VirtualDom_node('h6');
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
@@ -7373,6 +7374,17 @@ var $rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return $rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
+var $author$project$PitchTest$totalScore = function (xs) {
+	return $elm$core$String$fromInt(
+		$elm$core$List$sum(
+			A2(
+				$elm$core$List$map,
+				function (_v0) {
+					var error = _v0.c;
+					return 1 - A2($elm$core$Basics$min, error, 1);
+				},
+				xs)));
+};
 var $author$project$PitchTest$showResults = function (errors) {
 	return A2(
 		$elm$html$Html$div,
@@ -7384,8 +7396,23 @@ var $author$project$PitchTest$showResults = function (errors) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(
-						'Mean absolute error (semitones): ' + $author$project$PitchTest$meanError(errors)),
+						A2(
+						$elm$html$Html$h6,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'Mean absolute error (semitones): ' + $author$project$PitchTest$meanError(errors))
+							])),
+						A2(
+						$elm$html$Html$h6,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'Score: ' + ($author$project$PitchTest$totalScore(errors) + (' / ' + $elm$core$String$fromInt(
+									$elm$core$List$length(errors)))))
+							])),
 						$rundis$elm_bootstrap$Bootstrap$Table$simpleTable(
 						_Utils_Tuple2(
 							$rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
