@@ -285,7 +285,10 @@ showResults : List ( String, String, Int ) -> Html Msg
 showResults errors =
     div []
         [ div []
-            [ text <| "Mean absolute error (semitones): " ++ meanError errors
+            [ h6 []
+                [ text <| "Mean absolute error (semitones): " ++ meanError errors ]
+            , h6 []
+                [ text <| "Score: " ++ totalScore errors ++ " / " ++ (String.fromInt <| List.length errors) ]
             , Table.simpleTable
                 ( Table.simpleThead
                     [ Table.th [] [ text "Actual note" ]
@@ -308,6 +311,11 @@ showResults errors =
                 )
             ]
         ]
+
+
+totalScore : List ( String, String, Int ) -> String
+totalScore xs =
+    String.fromInt (List.sum <| List.map (\( _, _, error ) -> 1 - min error 1) xs)
 
 
 meanError : List ( String, String, Int ) -> String
