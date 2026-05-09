@@ -288,7 +288,7 @@ showResults errors =
             [ h6 []
                 [ text <| "Mean absolute error (semitones): " ++ meanError errors ]
             , h6 []
-                [ text <| "Score: " ++ totalScore errors ++ " / " ++ (String.fromInt <| List.length errors) ]
+                [ text <| "Score: " ++ totalScore errors ]
             , Table.simpleTable
                 ( Table.simpleThead
                     [ Table.th [] [ text "Actual note" ]
@@ -318,7 +318,7 @@ totalScore xs =
     let total = List.sum <| List.map (\( _, _, error ) -> 1 - min error 1) xs
         len = List.length xs
         percentage = round (toFloat total*100.0 / toFloat len)
-    in (String.fromInt total) ++ " / " ++ (String.fromInt len) ++ " (" ++ (String.fromInt percentage) ++ ")"
+    in (String.fromInt total) ++ " / " ++ (String.fromInt len) ++ " (" ++ (String.fromInt percentage) ++ "%)"
 
 
 meanError : List ( String, String, Int ) -> String
