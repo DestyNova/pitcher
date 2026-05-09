@@ -315,7 +315,10 @@ showResults errors =
 
 totalScore : List ( String, String, Int ) -> String
 totalScore xs =
-    String.fromInt (List.sum <| List.map (\( _, _, error ) -> 1 - min error 1) xs)
+    let total = List.sum <| List.map (\( _, _, error ) -> 1 - min error 1) xs
+        len = List.length xs
+        percentage = round (toFloat total*100.0 / toFloat len)
+    in (String.fromInt total) ++ " / " ++ (String.fromInt len) ++ " (" ++ (String.fromInt percentage) ++ ")"
 
 
 meanError : List ( String, String, Int ) -> String
