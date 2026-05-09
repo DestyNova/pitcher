@@ -7374,16 +7374,19 @@ var $rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return $rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
+var $elm$core$Basics$round = _Basics_round;
 var $author$project$PitchTest$totalScore = function (xs) {
-	return $elm$core$String$fromInt(
-		$elm$core$List$sum(
-			A2(
-				$elm$core$List$map,
-				function (_v0) {
-					var error = _v0.c;
-					return 1 - A2($elm$core$Basics$min, error, 1);
-				},
-				xs)));
+	var total = $elm$core$List$sum(
+		A2(
+			$elm$core$List$map,
+			function (_v0) {
+				var error = _v0.c;
+				return 1 - A2($elm$core$Basics$min, error, 1);
+			},
+			xs));
+	var len = $elm$core$List$length(xs);
+	var percentage = $elm$core$Basics$round((total * 100.0) / len);
+	return $elm$core$String$fromInt(total) + (' / ' + ($elm$core$String$fromInt(len) + (' (' + ($elm$core$String$fromInt(percentage) + '%)'))));
 };
 var $author$project$PitchTest$showResults = function (errors) {
 	return A2(
@@ -7410,8 +7413,7 @@ var $author$project$PitchTest$showResults = function (errors) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'Score: ' + ($author$project$PitchTest$totalScore(errors) + (' / ' + $elm$core$String$fromInt(
-									$elm$core$List$length(errors)))))
+								'Score: ' + $author$project$PitchTest$totalScore(errors))
 							])),
 						$rundis$elm_bootstrap$Bootstrap$Table$simpleTable(
 						_Utils_Tuple2(
